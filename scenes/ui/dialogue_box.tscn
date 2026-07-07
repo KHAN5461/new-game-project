@@ -1,0 +1,68 @@
+[gd_scene format=3 uid="uid://b16bxam8vbjuo"]
+
+[ext_resource type="Script" path="res://scripts/ui/dialogue_box.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://b5p80iw6dn7bm" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Papers/RegularPaper.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://bse5h8yw0uc7v" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Troops/Warrior/Blue/Warrior_Blue.png" id="3_portrait"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bg"]
+texture = ExtResource("2_bg")
+texture_margin_left = 64.0
+texture_margin_top = 64.0
+texture_margin_right = 64.0
+texture_margin_bottom = 64.0
+axis_stretch_horizontal = 2
+axis_stretch_vertical = 2
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_portrait"]
+atlas = ExtResource("3_portrait")
+region = Rect2(0, 0, 192, 192)
+
+[node name="DialogueBox" type="CanvasLayer"]
+process_mode = 3
+script = ExtResource("1_script")
+
+[node name="Control" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="MarginContainer" type="MarginContainer" parent="Control"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -300.0
+offset_top = -250.0
+offset_right = 300.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+
+[node name="Panel" type="Panel" parent="Control/MarginContainer"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_bg")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="Control/MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="Portrait" type="TextureRect" parent="Control/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+texture = SubResource("AtlasTexture_portrait")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="TextLabel" type="RichTextLabel" parent="Control/MarginContainer/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 24
+text = "Hello, world!"

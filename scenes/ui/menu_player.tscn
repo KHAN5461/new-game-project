@@ -1,0 +1,266 @@
+[gd_scene load_steps=5 format=3 uid="uid://menu_player_uid"]
+
+[ext_resource type="Script" path="res://scripts/ui/carousel.gd" id="1_carousel"]
+[ext_resource type="Script" path="res://scripts/ui/unit_resources.gd" id="2_resources"]
+[ext_resource type="Script" path="res://scripts/ui/unit_construction.gd" id="3_construction"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/UI/Banners/Banner_Horizontal.png" id="4_banner"]
+
+[node name="UI" type="CanvasLayer"]
+
+[node name="Panel" type="Panel" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Carousel" type="Control" parent="Panel"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_carousel")
+
+[node name="Mask" type="Control" parent="Panel/Carousel"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="items" type="Control" parent="Panel/Carousel/Mask"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/Carousel/Mask/items"]
+position = Vector2(480, 270)
+
+[node name="choose icon" type="Control" parent="Panel/Carousel/Mask/items"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="LeftButton" type="TextureButton" parent="Panel/Carousel/Mask/items/choose icon"]
+layout_mode = 0
+offset_left = 320.0
+offset_top = 250.0
+offset_right = 360.0
+offset_bottom = 290.0
+
+[node name="rightButton" type="TextureButton" parent="Panel/Carousel/Mask/items/choose icon"]
+layout_mode = 0
+offset_left = 600.0
+offset_top = 250.0
+offset_right = 640.0
+offset_bottom = 290.0
+
+[node name="choose" type="Button" parent="Panel/Carousel/Mask/items/choose icon"]
+layout_mode = 0
+offset_left = 430.0
+offset_top = 400.0
+offset_right = 530.0
+offset_bottom = 440.0
+text = "Choose"
+
+[node name="UnitResources" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 20.0
+offset_top = 20.0
+offset_right = 300.0
+offset_bottom = 100.0
+script = ExtResource("2_resources")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Panel/UnitResources"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_banner")
+region_rect = Rect2(32, 32, 128, 128)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+
+[node name="Gidle" type="Control" parent="Panel/UnitResources"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label gold" type="Label" parent="Panel/UnitResources/Gidle"]
+layout_mode = 0
+offset_left = 50.0
+offset_top = 20.0
+offset_right = 90.0
+offset_bottom = 43.0
+text = " 500"
+
+[node name="Widle" type="Control" parent="Panel/UnitResources"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label wood" type="Label" parent="Panel/UnitResources/Widle"]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 20.0
+offset_right = 170.0
+offset_bottom = 43.0
+text = " 500"
+
+[node name="Midle" type="Control" parent="Panel/UnitResources"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Label meat" type="Label" parent="Panel/UnitResources/Midle"]
+layout_mode = 0
+offset_left = 210.0
+offset_top = 20.0
+offset_right = 250.0
+offset_bottom = 43.0
+text = " 500"
+
+[node name="UnitConstruction" type="Panel" parent="Panel"]
+layout_mode = 1
+anchors_preset = 7
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -350.0
+offset_top = -100.0
+offset_right = 350.0
+offset_bottom = -20.0
+grow_horizontal = 2
+grow_vertical = 0
+script = ExtResource("3_construction")
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Panel/UnitConstruction"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_banner")
+region_rect = Rect2(32, 32, 128, 128)
+patch_margin_left = 32
+patch_margin_top = 32
+patch_margin_right = 32
+patch_margin_bottom = 32
+
+[node name="selector" type="Sprite2D" parent="Panel/UnitConstruction"]
+
+[node name="BuildHouse1Btn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 40.0
+offset_top = 15.0
+offset_right = 90.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildHouse1Btn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildHouse1Btn"]
+position = Vector2(25, 25)
+
+[node name="BuildHouse2Btn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 130.0
+offset_top = 15.0
+offset_right = 180.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildHouse2Btn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildHouse2Btn"]
+position = Vector2(25, 25)
+
+[node name="BuildHouse3Btn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 220.0
+offset_top = 15.0
+offset_right = 270.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildHouse3Btn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildHouse3Btn"]
+position = Vector2(25, 25)
+
+[node name="BuildTowerBtn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 310.0
+offset_top = 15.0
+offset_right = 360.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildTowerBtn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildTowerBtn"]
+position = Vector2(25, 25)
+
+[node name="BuildmonasteryBtn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 400.0
+offset_top = 15.0
+offset_right = 450.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildmonasteryBtn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildmonasteryBtn"]
+position = Vector2(25, 25)
+
+[node name="BuildbarracksBtn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 490.0
+offset_top = 15.0
+offset_right = 540.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildbarracksBtn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildbarracksBtn"]
+position = Vector2(25, 25)
+
+[node name="BuildarcheryBtn" type="Button" parent="Panel/UnitConstruction"]
+layout_mode = 0
+offset_left = 580.0
+offset_top = 15.0
+offset_right = 630.0
+offset_bottom = 65.0
+
+[node name="Marker2D" type="Marker2D" parent="Panel/UnitConstruction/BuildarcheryBtn"]
+position = Vector2(25, 25)
+
+[node name="anim" type="AnimatedSprite2D" parent="Panel/UnitConstruction/BuildarcheryBtn"]
+position = Vector2(25, 25)

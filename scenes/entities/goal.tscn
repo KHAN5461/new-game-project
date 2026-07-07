@@ -1,0 +1,20 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/goal.gd" id="1_abcde"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Blue.png" id="2_abcde"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_abcde"]
+size = Vector2(64, 64)
+
+[node name="Goal" type="Area2D"]
+y_sort_enabled = true
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_abcde")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_abcde")
+offset = Vector2(0, -64)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_abcde")

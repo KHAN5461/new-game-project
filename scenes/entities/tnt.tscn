@@ -1,0 +1,22 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/tnt.gd" id="1_abcde"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Dynamite/Dynamite.png" id="2_abcde"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tnt"]
+size = Vector2(40, 40)
+
+[node name="TNT" type="StaticBody2D"]
+y_sort_enabled = true
+collision_layer = 16
+collision_mask = 6
+script = ExtResource("1_abcde")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_abcde")
+hframes = 6
+vframes = 1
+frame = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_tnt")

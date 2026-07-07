@@ -1,0 +1,195 @@
+[gd_scene format=3 uid="uid://c8l7d5f1w3g2h"]
+
+[ext_resource type="Script" uid="uid://dve5mdoosf6wf" path="res://scripts/core/ide_controller.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/speed_controls/battle_speed_button.tscn" id="9_speed_btn"]
+[ext_resource type="PackedScene" path="res://scenes/ui/overheat_bar/event_bar.tscn" id="10_overheat"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bg"]
+bg_color = Color(0.12, 0.12, 0.14, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_code"]
+bg_color = Color(0.15, 0.15, 0.17, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.25, 0.25, 0.3, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_blue"]
+bg_color = Color(0.15, 0.4, 0.7, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_blue_p"]
+bg_color = Color(0.1, 0.3, 0.6, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_red"]
+bg_color = Color(0.7, 0.2, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_red_p"]
+bg_color = Color(0.5, 0.1, 0.1, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_green"]
+bg_color = Color(0.2, 0.6, 0.3, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_btn_green_p"]
+bg_color = Color(0.15, 0.5, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_console"]
+bg_color = Color(0.08, 0.08, 0.1, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.2, 0.2, 0.25, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[node name="IDE_UI" type="PanelContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_bg")
+script = ExtResource("1_script")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_top = 10
+theme_override_constants/margin_right = 10
+theme_override_constants/margin_bottom = 10
+
+[node name="VBoxContainer" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="TopBar" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="TabsArea" type="HBoxContainer" parent="MarginContainer/VBoxContainer/TopBar"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ToggleBtn" type="Button" parent="MarginContainer/VBoxContainer/TopBar"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_blue")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_blue_p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_blue")
+text = "<"
+
+[node name="CodeEdit" type="CodeEdit" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_colors/caret_color = Color(1, 1, 1, 1)
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_colors/background_color = Color(0, 0, 0, 0)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_code")
+theme_override_styles/focus = SubResource("StyleBoxFlat_code")
+theme_override_colors/line_number_color = Color(0.4, 0.4, 0.45, 1)
+caret_blink = true
+gutters_draw_line_numbers = true
+auto_brace_completion_enabled = true
+auto_brace_completion_highlight_matching = true
+
+[node name="BottomArea" type="HBoxContainer" parent="MarginContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="Console" type="RichTextLabel" parent="MarginContainer/VBoxContainer/BottomArea"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_colors/default_color = Color(0.7, 0.7, 0.7, 1)
+theme_override_font_sizes/normal_font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_console")
+bbcode_enabled = true
+
+[node name="ControlsArea" type="VBoxContainer" parent="MarginContainer/VBoxContainer/BottomArea"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="RunButton" type="Button" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea/HBoxContainer"]
+custom_minimum_size = Vector2(80, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_green")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_green_p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_green")
+text = "RUN"
+
+[node name="StepButton" type="Button" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea/HBoxContainer"]
+custom_minimum_size = Vector2(80, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_blue")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_blue_p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_blue")
+text = "STEP"
+
+[node name="EmergencyHaltBtn" type="Button" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea/HBoxContainer"]
+custom_minimum_size = Vector2(80, 40)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 16
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_red")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_red_p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_red")
+text = "HALT"
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea"]
+layout_mode = 2
+theme_override_constants/separation = 10
+
+[node name="BattleSpeedButton" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea/HBoxContainer2" instance=ExtResource("9_speed_btn")]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 14
+theme_override_styles/normal = SubResource("StyleBoxFlat_btn_blue")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_btn_blue_p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_btn_blue")
+
+[node name="CPUHeatBar" parent="MarginContainer/VBoxContainer/BottomArea/ControlsArea/HBoxContainer2" instance=ExtResource("10_overheat")]
+layout_mode = 2
+size_flags_horizontal = 3

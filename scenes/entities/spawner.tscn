@@ -1,0 +1,18 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/spawner.gd" id="1_spawner"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Red.png" id="2_tex"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_spawner"]
+size = Vector2(64, 64)
+
+[node name="Spawner" type="StaticBody2D"]
+y_sort_enabled = true
+script = ExtResource("1_spawner")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_tex")
+offset = Vector2(0, -64)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_spawner")

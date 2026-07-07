@@ -1,0 +1,299 @@
+[gd_scene format=3 uid="uid://cda1u3jx42f7x"]
+
+[ext_resource type="Script" path="res://scripts/ui/game_hud.gd" id="1_2uf8q"]
+[ext_resource type="Texture2D" uid="uid://dxq8unbncbmlh" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner_Slots.png" id="2_banner_slots"]
+[ext_resource type="Texture2D" uid="uid://yn2uhrc3yckk" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner.png" id="3_banner"]
+[ext_resource type="Texture2D" uid="uid://cdijmmp3d5poc" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png" id="4_wood"]
+[ext_resource type="Texture2D" uid="uid://bolya1bjkbyg" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable_Slots.png" id="5_wood_slots"]
+[ext_resource type="Texture2D" uid="uid://bicwjlq546maq" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/BigBlueButton_Regular.png" id="6_btn_blue"]
+[ext_resource type="Texture2D" uid="uid://74ggllvyy571" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Buttons/BigBlueButton_Pressed.png" id="7_btn_blue_p"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_banner_slots"]
+texture = ExtResource("2_banner_slots")
+texture_margin_left = 32.0
+texture_margin_top = 32.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_banner"]
+texture = ExtResource("3_banner")
+texture_margin_left = 64.0
+texture_margin_top = 64.0
+texture_margin_right = 64.0
+texture_margin_bottom = 64.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wood_slots"]
+texture = ExtResource("5_wood_slots")
+texture_margin_left = 32.0
+texture_margin_top = 32.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_wood"]
+texture = ExtResource("4_wood")
+texture_margin_left = 32.0
+texture_margin_top = 32.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
+texture = ExtResource("6_btn_blue")
+texture_margin_left = 16.0
+texture_margin_top = 16.0
+texture_margin_right = 16.0
+texture_margin_bottom = 20.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_p"]
+texture = ExtResource("7_btn_blue_p")
+texture_margin_left = 16.0
+texture_margin_top = 20.0
+texture_margin_right = 16.0
+texture_margin_bottom = 16.0
+
+[node name="GameHUD" type="CanvasLayer" unique_id=1276209353]
+layer = 10
+script = ExtResource("1_2uf8q")
+
+[node name="MarginContainer" type="MarginContainer" parent="." unique_id=1238375288]
+visible = false
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 100.0
+grow_horizontal = 2
+theme_override_constants/margin_left = 30
+theme_override_constants/margin_top = 20
+theme_override_constants/margin_right = 30
+theme_override_constants/margin_bottom = 0
+
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer" unique_id=666565220]
+layout_mode = 2
+theme_override_constants/separation = 20
+
+[node name="HealthBox" type="Control" parent="MarginContainer/HBoxContainer" unique_id=1919592026]
+custom_minimum_size = Vector2(200, 60)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer/HBoxContainer/HealthBox" unique_id=80311286]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_banner_slots")
+
+[node name="HBox" type="HBoxContainer" parent="MarginContainer/HBoxContainer/HealthBox/Panel" unique_id=1911136975]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/HBoxContainer/HealthBox/Panel/HBox" unique_id=1112136123]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/HealthBox/Panel/HBox" unique_id=1822504196]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.2, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 24
+text = "10 / 10"
+vertical_alignment = 1
+
+[node name="CenterBox" type="Control" parent="MarginContainer/HBoxContainer" unique_id=892814538]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="Panel" type="Panel" parent="MarginContainer/HBoxContainer/CenterBox" unique_id=1765948626]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -200.0
+offset_top = -45.0
+offset_right = 200.0
+offset_bottom = 45.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_banner")
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/CenterBox/Panel" unique_id=1989622310]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 101.0
+offset_top = 362.0
+offset_right = 101.0
+offset_bottom = 347.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_colors/font_color = Color(0.2, 0.1, 0.05, 1)
+theme_override_font_sizes/font_size = 28
+text = "Level 1: Tutorial"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="GoldBox" type="Control" parent="MarginContainer/HBoxContainer" unique_id=533318340]
+custom_minimum_size = Vector2(160, 60)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer/HBoxContainer/GoldBox" unique_id=1587153608]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_banner_slots")
+
+[node name="HBox" type="HBoxContainer" parent="MarginContainer/HBoxContainer/GoldBox/Panel" unique_id=2001486375]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="Icon" type="TextureRect" parent="MarginContainer/HBoxContainer/GoldBox/Panel/HBox" unique_id=1069150323]
+custom_minimum_size = Vector2(40, 40)
+layout_mode = 2
+expand_mode = 1
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="MarginContainer/HBoxContainer/GoldBox/Panel/HBox" unique_id=1771658425]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.8, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 1
+theme_override_constants/shadow_offset_y = 1
+theme_override_font_sizes/font_size = 24
+text = "0"
+vertical_alignment = 1
+
+[node name="BackpackBox" type="Control" parent="MarginContainer/HBoxContainer" unique_id=1484611886]
+custom_minimum_size = Vector2(160, 60)
+layout_mode = 2
+
+[node name="Panel" type="Panel" parent="MarginContainer/HBoxContainer/BackpackBox" unique_id=1284567821]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_wood_slots")
+
+[node name="HBox" type="HBoxContainer" parent="MarginContainer/HBoxContainer/BackpackBox/Panel" unique_id=486050911]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_right = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+alignment = 1
+
+[node name="EndGameUI" type="CanvasLayer" parent="." unique_id=646877187]
+process_mode = 3
+layer = 100
+visible = false
+
+[node name="Panel" type="Panel" parent="EndGameUI" unique_id=379159915]
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -250.0
+offset_top = -200.0
+offset_right = 250.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_wood")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="EndGameUI/Panel" unique_id=256380049]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 15
+alignment = 1
+
+[node name="TitleLabel" type="Label" parent="EndGameUI/Panel/VBoxContainer" unique_id=1571860977]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 36
+text = "VICTORY"
+horizontal_alignment = 1
+
+[node name="GoldLabel" type="Label" parent="EndGameUI/Panel/VBoxContainer" unique_id=1424336759]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 20
+text = "Gold Collected: 0"
+horizontal_alignment = 1
+
+[node name="LocLabel" type="Label" parent="EndGameUI/Panel/VBoxContainer" unique_id=910431151]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 20
+text = "Lines of Code: 0"
+horizontal_alignment = 1
+
+[node name="CyclesLabel" type="Label" parent="EndGameUI/Panel/VBoxContainer" unique_id=834812886]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.9, 0.9, 0.9, 1)
+theme_override_font_sizes/font_size = 20
+text = "CPU Cycles: 0"
+horizontal_alignment = 1
+
+[node name="RatingLabel" type="Label" parent="EndGameUI/Panel/VBoxContainer" unique_id=554121647]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.84, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "Rating: ⭐⭐⭐"
+horizontal_alignment = 1
+
+[node name="Spacer" type="Control" parent="EndGameUI/Panel/VBoxContainer" unique_id=1869279333]
+custom_minimum_size = Vector2(0, 20)
+layout_mode = 2
+
+[node name="HBoxContainer" type="HBoxContainer" parent="EndGameUI/Panel/VBoxContainer" unique_id=1399279236]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="RestartBtn" type="Button" parent="EndGameUI/Panel/VBoxContainer/HBoxContainer" unique_id=34346741]
+custom_minimum_size = Vector2(160, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn")
+text = "RESTART"
+
+[node name="NextBtn" type="Button" parent="EndGameUI/Panel/VBoxContainer/HBoxContainer" unique_id=742021850]
+custom_minimum_size = Vector2(160, 60)
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn")
+text = "NEXT"

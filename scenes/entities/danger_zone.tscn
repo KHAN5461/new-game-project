@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://dd1042ax"]
+
+[ext_resource type="Script" path="res://scripts/entities/danger_zone.gd" id="1_script"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_dz"]
+size = Vector2(192, 192)
+
+[node name="DangerZone" type="Area2D" groups=["danger"]]
+y_sort_enabled = true
+collision_layer = 16
+collision_mask = 6
+script = ExtResource("1_script")
+
+[node name="ColorRect" type="ColorRect" parent="."]
+offset_left = -96.0
+offset_top = -96.0
+offset_right = 96.0
+offset_bottom = 96.0
+color = Color(1, 0, 0, 0.4)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_dz")

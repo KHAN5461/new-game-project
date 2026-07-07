@@ -1,0 +1,21 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/fire_trap.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/Effects/Fire/Fire.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_trap"]
+size = Vector2(40, 40)
+
+[node name="FireTrap" type="Area2D" groups=["Traps"]]
+y_sort_enabled = true
+collision_layer = 16
+collision_mask = 6
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_texture")
+hframes = 7
+vframes = 1
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_trap")

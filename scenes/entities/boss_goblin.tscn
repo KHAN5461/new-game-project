@@ -1,0 +1,24 @@
+[gd_scene format=3]
+
+[ext_resource type="Script" path="res://scripts/entities/boss_goblin.gd" id="1_abcde"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/Factions/Goblins/Troops/Torch/Red/Torch_Red.png" id="2_abcde"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_abcde"]
+radius = 24.0
+height = 64.0
+
+[node name="EnemyGoblin" type="CharacterBody2D"]
+y_sort_enabled = true
+collision_layer = 4
+collision_mask = 19
+scale = Vector2(2.5, 2.5)
+script = ExtResource("1_abcde")
+speed = 225.0
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_abcde")
+hframes = 7
+vframes = 5
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CapsuleShape2D_abcde")

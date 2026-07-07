@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://dbmtyc6xe424f"]
+
+[ext_resource type="Script" uid="uid://bdqlx2npuj0fe" path="res://scenes/ui/speed_controls/battle_speed_button.gd" id="2_vdl3n"]
+
+[node name="BattleSpeedButton" type="Button"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 1163.0
+offset_top = 41.0
+offset_right = -57.0
+offset_bottom = -619.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+text = "x1 Speed"
+script = ExtResource("2_vdl3n")

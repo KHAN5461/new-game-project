@@ -1,0 +1,41 @@
+[gd_scene load_steps=6 format=3 uid="uid://lgf0nkwtym83"]
+
+[ext_resource type="Script" path="res://scripts/entities/characters/arrow.gd" id="1_bw8sv"]
+[ext_resource type="Texture2D" uid="uid://2y1df71jaq0e" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Troops/Archer/Arrow/Arrow.png" id="2_hf40g"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_pdjwk"]
+atlas = ExtResource("2_hf40g")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_nvao4"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_pdjwk")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_2s8v8"]
+radius = 7.0
+height = 68.0
+
+[node name="arrow" type="Area2D"]
+script = ExtResource("1_bw8sv")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_nvao4")
+animation = &"idle"
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 3)
+rotation = 1.5708
+shape = SubResource("CapsuleShape2D_2s8v8")
+metadata/_edit_lock_ = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

@@ -1,0 +1,78 @@
+[gd_scene load_steps=9 format=3 uid="uid://db8symw6gl14h"]
+
+[ext_resource type="Script" path="res://scripts/entities/buildings/castle.gd" id="1_qonrx"]
+[ext_resource type="Texture2D" uid="uid://bv8oybgqp50em" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png" id="1_tyhu4"]
+[ext_resource type="Texture2D" uid="uid://flpeiuh158ts" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Yellow.png" id="2_p4bwp"]
+[ext_resource type="Texture2D" uid="uid://x7hjigtaslio" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png" id="3_nftjl"]
+[ext_resource type="PackedScene" uid="uid://cptl2n7cw6ub7" path="res://scenes/entities/characters/archer.tscn" id="5_rkt33"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1jvkc"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_tyhu4")
+}],
+"loop": true,
+"name": &"destroyed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_p4bwp")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_nftjl")
+}],
+"loop": true,
+"name": &"under_construction",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_euvd5"]
+size = Vector2(348, 207)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_tifw2"]
+size = Vector2(192, 116)
+
+[node name="castle" type="StaticBody2D"]
+texture_filter = 1
+collision_layer = 31
+collision_mask = 31
+script = ExtResource("1_qonrx")
+
+[node name="anim" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_1jvkc")
+animation = &"idle"
+autoplay = "idle"
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 14.5)
+shape = SubResource("RectangleShape2D_euvd5")
+metadata/_edit_lock_ = true
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(0, -18)
+metadata/_edit_lock_ = true
+
+[node name="castle" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="castle"]
+visible = false
+position = Vector2(2, 9)
+shape = SubResource("RectangleShape2D_tifw2")
+metadata/_edit_lock_ = true
+
+[node name="archer" parent="." instance=ExtResource("5_rkt33")]
+position = Vector2(93, -54)
+
+[node name="archer2" parent="." instance=ExtResource("5_rkt33")]
+position = Vector2(-91, -56)
+
+[connection signal="body_entered" from="castle" to="." method="_on_castle_body_entered"]

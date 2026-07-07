@@ -1,0 +1,49 @@
+Total referenced paths: 161
+
+Checking buildings:
+  USED: buildings/house.tscn
+  USED: buildings/tower.gd
+  USED: buildings/tower.tscn
+  USED: buildings/castle.tscn
+  USED: buildings/castle.gd
+  USED: buildings/house.gd
+
+Checking characters:
+  USED: characters/skull.tscn
+  USED: characters/arrow.gd
+  USED: characters/skull.gd
+  USED: characters/archer.tscn
+  USED: characters/warrior.gd
+  USED: characters/arrow.tscn
+  USED: characters/archer.gd
+  USED: characters/warrior.tscn
+  USED: characters/pawn.tscn
+  USED: characters/pawn.gd
+
+Checking decors:
+  USED: decors/fire.gd
+  USED: decors/tree.gd
+  USED: decors/wood.gd
+  USED: decors/tnt.tscn
+  USED: decors/fire.tscn
+  USED: decors/explo.tscn
+  USED: decors/wood.tscn
+  USED: decors/explo.gd
+  USED: decors/tree.tscn
+  USED: decors/tnt.gd
+
+Checking goblins:
+  USED: goblins/goblin_torch.gd
+  USED: goblins/goblin_barrel.tscn
+  USED: goblins/goblin_barrel.gd
+  USED: goblins/goblin_torch.tscn
+  USED: goblins/goblin_tnt.gd
+  USED: goblins/goblin_tnt.tscn
+
+Checking Game manager:
+
+Checking stats:
+  USED: stats/stats.tscn
+  USED: stats/rts_stats_ui.gd
+
+Checking units sets:

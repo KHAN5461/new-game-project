@@ -1,0 +1,91 @@
+[gd_scene load_steps=12 format=3 uid="uid://cvdt71t6lbx1i"]
+
+[ext_resource type="Script" path="res://scripts/entities/decors/tnt.gd" id="1_6sien"]
+[ext_resource type="Texture2D" uid="uid://civak6t68uxn0" path="res://assets/Tiny Swords (Update 010)/Factions/Goblins/Troops/TNT/Dynamite/Dynamite.png" id="1_ivkyx"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8j3ba"]
+atlas = ExtResource("1_ivkyx")
+region = Rect2(0, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_8fpvw"]
+atlas = ExtResource("1_ivkyx")
+region = Rect2(64, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_00t84"]
+atlas = ExtResource("1_ivkyx")
+region = Rect2(128, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_416ca"]
+atlas = ExtResource("1_ivkyx")
+region = Rect2(192, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_whdfb"]
+atlas = ExtResource("1_ivkyx")
+region = Rect2(256, 0, 64, 64)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ndye8"]
+atlas = ExtResource("1_ivkyx")
+region = Rect2(320, 0, 64, 64)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_k8s3a"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8j3ba")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_8fpvw")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_00t84")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_416ca")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_whdfb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ndye8")
+}],
+"loop": true,
+"name": &"default",
+"speed": 10.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_cj2gt"]
+radius = 16.0
+height = 64.0
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_2rg34"]
+radius = 32.0
+
+[node name="TNT" type="Area2D" groups=["tnt"]]
+texture_filter = 1
+scale = Vector2(0.6, 0.6)
+script = ExtResource("1_6sien")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(0, 8)
+sprite_frames = SubResource("SpriteFrames_k8s3a")
+autoplay = "default"
+frame_progress = 0.655148
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+shape = SubResource("CapsuleShape2D_cj2gt")
+metadata/_edit_lock_ = true
+
+[node name="detector" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="detector"]
+visible = false
+shape = SubResource("CircleShape2D_2rg34")
+debug_color = Color(0.96604, 0.180378, 0.102188, 0.42)
+metadata/_edit_lock_ = true
+
+[connection signal="area_entered" from="." to="." method="_on_area_entered"]
+[connection signal="area_entered" from="detector" to="." method="_on_detector_area_entered"]
+[connection signal="body_entered" from="detector" to="." method="_on_detector_body_entered"]

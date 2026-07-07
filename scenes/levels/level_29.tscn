@@ -1,0 +1,29 @@
+[gd_scene format=3 uid="uid://fs8f31l446jx"]
+
+[ext_resource type="Script" path="res://scripts/core/level.gd" id="1_script"]
+[ext_resource type="PackedScene" uid="uid://dsj6njqf0r4e5" path="res://scenes/entities/warrior.tscn" id="2_warrior"]
+[ext_resource type="PackedScene" uid="uid://archuid1234" path="res://scenes/entities/archer.tscn" id="3_archer"]
+[ext_resource type="PackedScene" uid="uid://bossuid1234" path="res://scenes/entities/boss_goblin.tscn" id="4_boss"]
+
+[node name="Level11" type="Node2D"]
+y_sort_enabled = true
+script = ExtResource("1_script")
+
+[node name="TileMap" type="TileMap" parent="."]
+z_index = -1
+y_sort_enabled = true
+format = 2
+
+[node name="Entities" type="Node2D" parent="."]
+
+[node name="Warrior" parent="Entities" instance=ExtResource("2_warrior")]
+position = Vector2(256, 512)
+
+[node name="Archer" parent="Entities" instance=ExtResource("3_archer")]
+position = Vector2(512, 512)
+
+[node name="BossGoblin" parent="Entities" instance=ExtResource("4_boss")]
+position = Vector2(384, 128)
+
+[node name="Goal" type="Area2D" parent="Entities" groups=["goals"]]
+position = Vector2(384, 0)

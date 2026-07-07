@@ -1,0 +1,49 @@
+[gd_scene format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/ui/ide_ui.tscn" id="1_ide"]
+[ext_resource type="Script" path="res://scripts/levels/main_game.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Tiny Swords (Update 010)/Terrain/Water/Water.png" id="2_ykeeq"]
+
+[node name="MainGame" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="background" type="TextureRect" parent="."]
+z_index = -1
+texture_filter = 1
+layout_mode = 0
+offset_left = -2876.0
+offset_top = -3646.0
+offset_right = 8465.0
+offset_bottom = 4323.0
+texture = ExtResource("2_ykeeq")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="IDE_UI" parent="HBoxContainer" instance=ExtResource("1_ide")]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_stretch_ratio = 1.5
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(743, 648)
+render_target_update_mode = 4

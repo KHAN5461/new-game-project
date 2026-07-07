@@ -1,0 +1,81 @@
+[gd_scene load_steps=12 format=3 uid="uid://bnwjm6xan1nts"]
+
+[ext_resource type="Texture2D" uid="uid://dqxa8nb4txnb0" path="res://assets/Tiny Swords (Update 010)/Effects/Fire/Fire.png" id="1_ne8m2"]
+[ext_resource type="Script" path="res://scripts/entities/decors/fire.gd" id="2_l4m2t"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_o4gmx"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rnvb0"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_r80or"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vrtwb"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3mbux"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_jrvs5"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k0p52"]
+atlas = ExtResource("1_ne8m2")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_ofn4t"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_o4gmx")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rnvb0")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_r80or")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vrtwb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3mbux")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_jrvs5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k0p52")
+}],
+"loop": true,
+"name": &"fire",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_rese0"]
+radius = 51.8941
+
+[node name="fire" type="AnimatedSprite2D"]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_ofn4t")
+animation = &"fire"
+autoplay = "fire"
+frame_progress = 0.943491
+script = ExtResource("2_l4m2t")
+
+[node name="fire" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="fire"]
+visible = false
+shape = SubResource("CircleShape2D_rese0")
+metadata/_edit_lock_ = true
+
+[connection signal="body_entered" from="fire" to="." method="_on_fire_body_entered"]

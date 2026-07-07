@@ -1,0 +1,81 @@
+[gd_scene load_steps=10 format=3 uid="uid://c4y2ur3bmjk0g"]
+
+[ext_resource type="Script" path="res://scripts/entities/buildings/tower.gd" id="1_p7ib5"]
+[ext_resource type="Texture2D" uid="uid://oqivphuwj3oa" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Destroyed.png" id="1_xveg8"]
+[ext_resource type="Texture2D" uid="uid://cgb7vmgmka3gn" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Yellow.png" id="2_m7dks"]
+[ext_resource type="Texture2D" uid="uid://bnuh02b1xi7o0" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Tower/Tower_Construction.png" id="3_buvi6"]
+[ext_resource type="PackedScene" uid="uid://cptl2n7cw6ub7" path="res://scenes/entities/characters/archer.tscn" id="5_hs31w"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t86in"]
+atlas = ExtResource("2_m7dks")
+region = Rect2(0, 0, 128, 256)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_4ohh2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_xveg8")
+}],
+"loop": true,
+"name": &"destroyed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t86in")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_buvi6")
+}],
+"loop": true,
+"name": &"under_construction",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_1ic5v"]
+radius = 52.0
+height = 178.5
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_0estd"]
+radius = 70.0
+height = 178.0
+
+[node name="tower" type="StaticBody2D"]
+texture_filter = 1
+collision_layer = 31
+collision_mask = 31
+script = ExtResource("1_p7ib5")
+
+[node name="anim" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_4ohh2")
+animation = &"idle"
+autoplay = "under_construction"
+metadata/_edit_lock_ = true
+
+[node name="shape" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(-3, 14.75)
+shape = SubResource("CapsuleShape2D_1ic5v")
+metadata/_edit_lock_ = true
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(0, -57)
+
+[node name="tower" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="tower"]
+visible = false
+position = Vector2(-2, 39)
+shape = SubResource("CapsuleShape2D_0estd")
+metadata/_edit_lock_ = true
+
+[node name="archer" parent="." instance=ExtResource("5_hs31w")]
+visible = false
+position = Vector2(3, -60)
+
+[connection signal="body_entered" from="tower" to="." method="_on_tower_body_entered"]

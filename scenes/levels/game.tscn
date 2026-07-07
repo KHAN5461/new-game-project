@@ -1,0 +1,36 @@
+[gd_scene load_steps=3 format=3 uid="uid://game_wrapper_uid"]
+
+[ext_resource type="Script" path="res://scripts/levels/main_game.gd" id="1_script"]
+[ext_resource type="PackedScene" path="res://scenes/ui/ide_ui.tscn" id="2_ide"]
+
+[node name="Game" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/separation = 0
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="HBoxContainer/SubViewportContainer"]
+handle_input_locally = false
+size = Vector2i(2, 2)
+render_target_update_mode = 4
+
+[node name="IDE_UI" parent="HBoxContainer" instance=ExtResource("2_ide")]
+custom_minimum_size = Vector2(500, 0)
+layout_mode = 2

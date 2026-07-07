@@ -1,0 +1,86 @@
+[gd_scene load_steps=12 format=3 uid="uid://de88pibj8ca8r"]
+
+[ext_resource type="Texture2D" uid="uid://b30vidkjybw21" path="res://assets/Tiny Swords (Update 010)/Resources/Resources/W_Spawn.png" id="1_1ubaw"]
+[ext_resource type="Script" path="res://scripts/entities/decors/wood.gd" id="1_uw12f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ngkh8"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(0, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ul1s4"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(128, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mmq6g"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(256, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rvlda"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(384, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_djmaf"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(512, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_k5so6"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(640, 0, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ybu0k"]
+atlas = ExtResource("1_1ubaw")
+region = Rect2(768, 0, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_2i6so"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ngkh8")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ul1s4")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mmq6g")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rvlda")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_djmaf")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_k5so6")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ybu0k")
+}],
+"loop": false,
+"name": &"sp",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_b0fgv"]
+radius = 38.4708
+
+[node name="wood" type="Area2D"]
+texture_filter = 1
+scale = Vector2(0.6, 0.6)
+script = ExtResource("1_uw12f")
+
+[node name="Anim" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_2i6so")
+animation = &"sp"
+autoplay = "sp"
+frame = 6
+frame_progress = 1.0
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 21)
+shape = SubResource("CircleShape2D_b0fgv")
+metadata/_edit_lock_ = true
+
+[connection signal="body_entered" from="." to="." method="_on_body_entered"]

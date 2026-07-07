@@ -1,0 +1,164 @@
+[gd_scene format=3 uid="uid://fp5uua22ixbh"]
+
+[ext_resource type="Script" uid="uid://bw8ut8o0hacrp" path="res://scripts/ui/shop.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://cdj5etganeaa2" path="res://assets/Tiny Swords (Update 010)/UI/Banners/Banner_Vertical.png" id="2_bg"]
+[ext_resource type="Texture2D" uid="uid://bejtbegq2br53" path="res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Blue.png" id="3_btn"]
+[ext_resource type="Texture2D" uid="uid://2ulvwli6r27i" path="res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Blue_Pressed.png" id="4_btn_p"]
+[ext_resource type="Texture2D" uid="uid://bvag61udbckvv" path="res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Red.png" id="5_btn_red"]
+[ext_resource type="Texture2D" uid="uid://b2rv0vvevviie" path="res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Red_Pressed.png" id="6_btn_red_p"]
+[ext_resource type="Texture2D" uid="uid://c153tgohoj75t" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Troops/Pawn/Blue/Pawn_Blue.png" id="7_npc"]
+[ext_resource type="Texture2D" uid="uid://bvon38k38xqvh" path="res://assets/Tiny Swords (Update 010)/Deco/05.png" id="8_counter"]
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_bg"]
+texture = ExtResource("2_bg")
+texture_margin_left = 64.0
+texture_margin_top = 64.0
+texture_margin_right = 64.0
+texture_margin_bottom = 64.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn"]
+texture = ExtResource("3_btn")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_p"]
+texture = ExtResource("4_btn_p")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_red"]
+texture = ExtResource("5_btn_red")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[sub_resource type="StyleBoxTexture" id="StyleBoxTexture_btn_red_p"]
+texture = ExtResource("6_btn_red_p")
+texture_margin_left = 32.0
+texture_margin_top = 16.0
+texture_margin_right = 32.0
+texture_margin_bottom = 32.0
+
+[node name="Shop" type="Control" unique_id=202685963]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_script")
+
+[node name="ColorRect" type="ColorRect" parent="." unique_id=515734972]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0.05, 0.12, 0.05, 1)
+
+[node name="MerchantNPC" type="Sprite2D" parent="." unique_id=1641352170]
+position = Vector2(300, 350)
+scale = Vector2(3, 3)
+texture = ExtResource("7_npc")
+hframes = 6
+vframes = 6
+
+[node name="Counter" type="Sprite2D" parent="." unique_id=547526743]
+position = Vector2(300, 450)
+scale = Vector2(3, 3)
+texture = ExtResource("8_counter")
+
+[node name="PanelContainer" type="PanelContainer" parent="." unique_id=1947493572]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = 50.0
+offset_top = -200.0
+offset_right = 500.0
+offset_bottom = 200.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxTexture_bg")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="PanelContainer" unique_id=522856574]
+layout_mode = 2
+theme_override_constants/separation = 30
+alignment = 1
+
+[node name="Title" type="Label" parent="PanelContainer/VBoxContainer" unique_id=293350188]
+layout_mode = 2
+theme_override_colors/font_color = Color(0.6, 1, 0.6, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 42
+text = "MERCHANT TENT"
+horizontal_alignment = 1
+
+[node name="HealthBtn" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1134664978]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn")
+text = "Buy Max Health (+10) - 50 Gold"
+
+[node name="AttackBtn" type="Button" parent="PanelContainer/VBoxContainer" unique_id=160512170]
+custom_minimum_size = Vector2(0, 80)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn")
+text = "Buy Attack Damage (+1) - 100 Gold"
+
+[node name="KeyBtn" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1886751083]
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 0.9, 0.6, 1)
+theme_override_constants/h_separation = 10
+theme_override_font_sizes/font_size = 20
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_p")
+theme_override_styles/disabled = SubResource("StyleBoxTexture_btn_red")
+text = "Buy Master Key - 150 Gold"
+
+[node name="BackBtn" type="Button" parent="PanelContainer/VBoxContainer" unique_id=1779797294]
+custom_minimum_size = Vector2(0, 60)
+layout_mode = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxTexture_btn_red")
+theme_override_styles/pressed = SubResource("StyleBoxTexture_btn_red_p")
+theme_override_styles/hover = SubResource("StyleBoxTexture_btn_red")
+text = "Back to Map"
+
+[node name="GoldLabel" type="Label" parent="." unique_id=387577376]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -1200.0
+offset_top = 21.0
+offset_right = -980.0
+offset_bottom = 66.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 0.85, 0.2, 1)
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 1)
+theme_override_constants/shadow_offset_x = 2
+theme_override_constants/shadow_offset_y = 2
+theme_override_font_sizes/font_size = 32
+text = "Gold: 0"
+horizontal_alignment = 2

@@ -1,0 +1,81 @@
+[gd_scene load_steps=9 format=3 uid="uid://c76obv63qumcn"]
+
+[ext_resource type="Script" path="res://scripts/entities/buildings/house.gd" id="1_d71j4"]
+[ext_resource type="Texture2D" uid="uid://bolcxlp8f3xfi" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Destroyed.png" id="1_y1uij"]
+[ext_resource type="PackedScene" uid="uid://bwgu8vvuqgsk0" path="res://scenes/entities/characters/pawn.tscn" id="2_h77ek"]
+[ext_resource type="Texture2D" uid="uid://d4nkchsacndtd" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Yellow.png" id="2_tnkxf"]
+[ext_resource type="Texture2D" uid="uid://gxsau34gkq5e" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/House/House_Construction.png" id="3_b5qss"]
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bfkp7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_y1uij")
+}],
+"loop": true,
+"name": &"destroyed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("2_tnkxf")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_b5qss")
+}],
+"loop": true,
+"name": &"under_construction",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5lfvc"]
+radius = 80.0
+height = 204.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_obymh"]
+radius = 55.0
+height = 146.0
+
+[node name="house" type="StaticBody2D" groups=["build"]]
+texture_filter = 1
+collision_layer = 31
+collision_mask = 31
+script = ExtResource("1_d71j4")
+pawn_scene = ExtResource("2_h77ek")
+
+[node name="anim" type="AnimatedSprite2D" parent="."]
+sprite_frames = SubResource("SpriteFrames_bfkp7")
+animation = &"under_construction"
+autoplay = "under_construction"
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_5lfvc")
+metadata/_edit_lock_ = true
+
+[node name="Marker2D" type="Marker2D" parent="."]
+position = Vector2(0, 102)
+metadata/_edit_lock_ = true
+
+[node name="Timer" type="Timer" parent="."]
+wait_time = 20.0
+
+[node name="house" type="Area2D" parent="."]
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="house"]
+visible = false
+position = Vector2(-2, 34)
+shape = SubResource("CapsuleShape2D_obymh")
+debug_color = Color(0.729412, 0.470588, 0.0823529, 0.286275)
+metadata/_edit_lock_ = true
+
+[connection signal="area_shape_exited" from="house" to="." method="_on_house_area_shape_exited"]
+[connection signal="body_entered" from="house" to="." method="_on_house_body_entered"]

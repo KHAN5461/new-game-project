@@ -1,0 +1,187 @@
+[gd_scene load_steps=20 format=3 uid="uid://or3hx1vutlhc"]
+
+[ext_resource type="Texture2D" uid="uid://b17eray85qcmu" path="res://assets/Tiny Swords (Update 010)/Factions/Goblins/Troops/Barrel/Red/Barrel_Red.png" id="1_2cu2a"]
+[ext_resource type="Script" path="res://scripts/entities/goblins/goblin_barrel.gd" id="1_fohyn"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_x0etk"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(0, 640, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ovm7q"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(128, 640, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cvm28"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(256, 640, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0v43t"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(0, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_57v5m"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(128, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_cgveq"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(256, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_hyrdb"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(384, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_rcemv"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(512, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_0rike"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(640, 128, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_lahqu"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(0, 512, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_t1e1x"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(128, 512, 128, 128)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_2ahm4"]
+atlas = ExtResource("1_2cu2a")
+region = Rect2(256, 512, 128, 128)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_8jpi5"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_x0etk")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ovm7q")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cvm28")
+}],
+"loop": true,
+"name": &"explo",
+"speed": 20.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0v43t")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_57v5m")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_cgveq")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_hyrdb")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_rcemv")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_0rike")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 10.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_lahqu")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_t1e1x")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_2ahm4")
+}],
+"loop": true,
+"name": &"run",
+"speed": 10.0
+}]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_ooroc"]
+radius = 26.3059
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_drieh"]
+radius = 135.033
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_yvr4j"]
+radius = 67.6831
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_uvfu6"]
+radius = 30.5941
+
+[node name="goblin_barrel" type="CharacterBody2D" groups=["obstacles"]]
+position = Vector2(-11, 218)
+collision_layer = 31
+collision_mask = 31
+script = ExtResource("1_fohyn")
+
+[node name="anim" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+position = Vector2(8, 3)
+sprite_frames = SubResource("SpriteFrames_8jpi5")
+animation = &"explo"
+autoplay = "idle"
+frame_progress = 0.950657
+metadata/_edit_lock_ = true
+
+[node name="shape" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(7, 9)
+shape = SubResource("CircleShape2D_ooroc")
+metadata/_edit_lock_ = true
+
+[node name="dectector zone" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="dectector zone"]
+position = Vector2(9, 6)
+shape = SubResource("CircleShape2D_drieh")
+debug_color = Color(0.361823, 0.611498, 0.244232, 0.42)
+metadata/_edit_lock_ = true
+
+[node name="attack zone" type="Area2D" parent="."]
+visible = false
+position = Vector2(12, 7)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="attack zone"]
+position = Vector2(-1, 1)
+shape = SubResource("CircleShape2D_yvr4j")
+metadata/_edit_lock_ = true
+
+[node name="hitbox" type="Area2D" parent="."]
+visible = false
+position = Vector2(12, 8)
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox"]
+shape = SubResource("CircleShape2D_uvfu6")
+debug_color = Color(0.983756, 0.102916, 0.182855, 0.42)
+metadata/_edit_lock_ = true
+
+[node name="NavigationAgent2D" type="NavigationAgent2D" parent="."]
+target_desired_distance = 5.0
+navigation_layers = 31
+simplify_path = true
+simplify_epsilon = 10.0
+avoidance_enabled = true
+radius = 20.0
+max_neighbors = 32
+avoidance_layers = 31
+avoidance_mask = 31
+
+[connection signal="body_entered" from="dectector zone" to="." method="_on_dectector_zone_body_entered"]
+[connection signal="body_exited" from="dectector zone" to="." method="_on_dectector_zone_body_exited"]
+[connection signal="body_entered" from="attack zone" to="." method="_on_attack_zone_body_entered"]
+[connection signal="body_exited" from="attack zone" to="." method="_on_attack_zone_body_exited"]
+[connection signal="area_entered" from="hitbox" to="." method="_on_hitbox_area_entered"]
+[connection signal="body_entered" from="hitbox" to="." method="_on_hitbox_body_entered"]
+[connection signal="velocity_computed" from="NavigationAgent2D" to="." method="_on_navigation_agent_2d_velocity_computed"]

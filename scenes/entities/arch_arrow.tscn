@@ -1,0 +1,33 @@
+[gd_scene format=3 uid="uid://ccetg37cfw7ry"]
+
+[ext_resource type="Script" uid="uid://dj1c0kwmf0bjl" path="res://scripts/entities/arch_arrow.gd" id="1_rpcxf"]
+[ext_resource type="Texture2D" uid="uid://b5eh0pxbpb6lx" path="res://assets/Arrow.png" id="2_kfpjg"]
+
+[sub_resource type="Curve2D" id="Curve2D_24fax"]
+_data = {
+"points": PackedVector2Array(0, 0, 150, -300, 0, 0, 0, 0, 150, -300, 300, 0)
+}
+point_count = 2
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1ddl0"]
+size = Vector2(62, 14)
+
+[node name="Arrow" type="Path2D" unique_id=150739708]
+collision_layer = 16
+collision_mask = 6
+scale = Vector2(1.2133334, 1)
+curve = SubResource("Curve2D_24fax")
+script = ExtResource("1_rpcxf")
+
+[node name="PathFollow2D" type="PathFollow2D" parent="." unique_id=927581982]
+rotation = -1.1071488
+
+[node name="Area2D" type="Area2D" parent="PathFollow2D" unique_id=348554057]
+
+[node name="Sprite2D" type="Sprite2D" parent="PathFollow2D/Area2D" unique_id=910696284]
+texture = ExtResource("2_kfpjg")
+vframes = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="PathFollow2D/Area2D" unique_id=719390541]
+position = Vector2(0, 3)
+shape = SubResource("RectangleShape2D_1ddl0")

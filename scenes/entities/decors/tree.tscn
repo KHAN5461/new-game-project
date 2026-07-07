@@ -1,0 +1,112 @@
+[gd_scene load_steps=13 format=3 uid="uid://vci6dpflhpyb"]
+
+[ext_resource type="Texture2D" uid="uid://ev1bgngqfh6n" path="res://assets/Tiny Swords (Update 010)/Resources/Trees/Tree.png" id="1_dgw3b"]
+[ext_resource type="Script" path="res://scripts/entities/decors/tree.gd" id="1_tt6vs"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_ieafg"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(384, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qaq5p"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(576, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_vavbj"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(0, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_mc8xp"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(192, 192, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_f6346"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(0, 384, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_tum8n"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(0, 0, 192, 192)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_c3mvj"]
+atlas = ExtResource("1_dgw3b")
+region = Rect2(192, 0, 192, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_1wnai"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_ieafg")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qaq5p")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_vavbj")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_mc8xp")
+}],
+"loop": true,
+"name": &"attacked",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_f6346")
+}],
+"loop": true,
+"name": &"chopped",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_tum8n")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_c3mvj")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hejy2"]
+radius = 20.0
+height = 68.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_21c4p"]
+radius = 30.0
+height = 60.0
+
+[node name="tree" type="StaticBody2D" groups=["obstacles"]]
+texture_filter = 1
+collision_layer = 31
+collision_mask = 31
+script = ExtResource("1_tt6vs")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_1wnai")
+animation = &"idle"
+autoplay = "idle"
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+visible = false
+position = Vector2(1, 50)
+shape = SubResource("CapsuleShape2D_hejy2")
+debug_color = Color(0.552941, 0.278431, 0.0196078, 0.419608)
+metadata/_edit_lock_ = true
+
+[node name="tree" type="Area2D" parent="."]
+collision_layer = 31
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="tree"]
+visible = false
+position = Vector2(1, 39)
+shape = SubResource("CapsuleShape2D_21c4p")
+debug_color = Color(0.883368, 0.330623, 0.127662, 0.42)
+metadata/_edit_lock_ = true
+
+[connection signal="body_entered" from="tree" to="." method="_on_section_body_entered"]
+[connection signal="body_exited" from="tree" to="." method="_on_section_body_exited"]
