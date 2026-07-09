@@ -28,6 +28,7 @@ SwarmManager="*res://scripts/core/swarm_manager.gd"
 LevelManager="*res://scripts/core/level_manager.gd"
 AudioManager="*res://scripts/core/audio_manager.gd"
 Global="*res://scripts/core/global.gd"
+GlobalSettings="*res://scripts/core/global_settings.gd"
 
 [display]
 

@@ -1,0 +1,39 @@
+# scripts/entities/characters/arrow.gd
+extends Area2D
+
+## Fired Arrow Projectile Entity script. Uses strict programmatic speed vectors 
+## and matches collision matrix layouts directly.
+
+var speed: float = 650.0
+var direction: Vector2 = Vector2.RIGHT
+var max_range: float = 800.0
+var distance_traveled: float = 0.0
+
+@onready var sprite: Sprite2D = $Sprite2D
+
+func _ready() -> void:
+	# Configure arrows programmatically
+	collision_layer = 0
+	set_collision_layer_value(5, true) # Layer 5: Projectiles
+	
+	# Detect Layer 1 (Terrain), Layer 3 (Enemies), Layer 4 (Obstacles)
+	collision_mask = 0
+	set_collision_mask_value(1, true)
+	set_collision_mask_value(3, true)
+	set_collision_mask_value(4, true)
+	
+	body_entered.connect(_on_body_entered)
+
+func _physics_process(delta: float) -> void:
+	var motion = direction * speed * delta
+	position += motion
+	distance_traveled += motion.length()
+	
+	if distance_traveled >= max_range:
+		queue_free()
+
+func _on_body_entered(body: Node2D) -> void:
+	if body.is_in_group("Enemies") and body.has_method("take_damage"):
+		body.take_damage(15) # ranged base damage values
+	# Clean arrow removal on impacts (terrain / obstacles)
+	queue_free()

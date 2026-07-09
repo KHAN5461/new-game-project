@@ -1,9 +1,27 @@
 extends CanvasLayer
 
-var state = "CODING"
+enum GameState {
+	CODING,
+	COMPILING,
+	RUNNING,
+	PAUSED,
+	OVERHEATED,
+	VICTORY,
+	DEFEAT,
+	GAMEOVER
+}
+
+signal state_changed(old_state, new_state)
+signal compilation_failed(err_msg: String, line: int)
+
+var state = GameState.CODING
+var active_interpreter: CustomInterpreter = null
+
+var level_origin_state: Dictionary = {}
 
 var lines_of_code: int = 0
 var execution_cycles: int = 0
+var max_allowed_cycles: int = 2500
 var hud_container: VBoxContainer
 var hud_health: Label
 var hud_gold: Label
@@ -42,13 +60,13 @@ func set_game_viewport(_vp: Viewport) -> void:
 	pass
 
 func _on_warrior_died() -> void:
-	state = "GAMEOVER"
-	await get_tree().create_timer(2.0, true, true).timeout
-	if state == "GAMEOVER":
+	transition_to(GameState.GAMEOVER)
+	await get_tree().create_timer(2.0, true, false, true).timeout
+	if state == GameState.GAMEOVER:
 		_on_restart_pressed()
 
 func _on_goal_reached() -> void:
-	state = "VICTORY"
+	transition_to(GameState.VICTORY)
 	var swarm = get_node_or_null("/root/SwarmManager")
 	if swarm:
 		swarm.stop_swarm()
@@ -61,21 +79,22 @@ func _on_goal_reached() -> void:
 			warrior.stats.save()
 		if warrior.get("inventory") and warrior.inventory.has_method("save"):
 			warrior.inventory.save()
-	await get_tree().create_timer(2.0, true, true).timeout
+	await get_tree().create_timer(2.0, true, false, true).timeout
 	_on_next_pressed()
 
 func _on_restart_pressed() -> void:
 	Engine.time_scale = 1.0
 	get_tree().paused = false
 	if end_game_ui: end_game_ui.hide()
-	state = "CODING"
-	LevelManager.restart_level()
+	transition_to(GameState.CODING)
+	restore_level_state()
+	# LevelManager.restart_level()
 
 func _on_next_pressed() -> void:
 	Engine.time_scale = 1.0
 	get_tree().paused = false
 	if end_game_ui: end_game_ui.hide()
-	state = "CODING"
+	transition_to(GameState.CODING)
 	if Global and Global.endless_mode:
 		Global.endless_depth += 1
 		LevelManager.restart_level()
@@ -165,7 +184,7 @@ func _process(_delta: float) -> void:
 		if hud_root: hud_root.show()
 		if objective_panel and objective_panel.position.y > -150: objective_panel.show()
 		
-	if state == "CODING" or state == "RUNNING":
+	if state == GameState.CODING or state == GameState.RUNNING:
 		var warrior = get_tree().get_first_node_in_group("warrior")
 			
 		if warrior and warrior.has_method("get_backpack") and hud_backpack != null:
@@ -178,3 +197,113 @@ func _process(_delta: float) -> void:
 				tex.custom_minimum_size = Vector2(24, 24)
 				tex.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
 				hud_backpack.add_child(tex)
+
+func transition_to(new_state):
+	if state == new_state: return
+	
+	var old_state = state
+	state = new_state
+	
+	match state:
+		GameState.CODING:
+			Engine.time_scale = 0.0
+			_set_ide_visibility(true)
+			if active_interpreter: active_interpreter.force_stop()
+			
+		GameState.RUNNING:
+			Engine.time_scale = 1.0
+			_set_ide_visibility(false)
+			execution_cycles = 0
+			
+		GameState.PAUSED:
+			Engine.time_scale = 0.0
+			
+		GameState.OVERHEATED:
+			Engine.time_scale = 0.0
+			_display_defeat_modal("CPU Overheat! Optimization threshold exceeded.")
+			
+		GameState.VICTORY:
+			Engine.time_scale = 0.0
+			_display_victory_modal()
+			
+		GameState.DEFEAT, GameState.GAMEOVER:
+			var swarm = get_node_or_null("/root/SwarmManager")
+			if swarm: swarm.stop_swarm()
+			_display_defeat_modal("Your unit took critical damage on the field.")
+
+	emit_signal("state_changed", old_state, state)
+
+func compile_and_run(code: String, target_unit: Node):
+	if code.contains("OS.execute") or code.contains("get_tree().quit"):
+		emit_signal("compilation_failed", "Security Violation: Unauthorized execution denied.", 1)
+		return
+
+	transition_to(GameState.COMPILING)
+	
+	_snapshot_entire_active_level()
+	
+	var active_lang = GlobalSettings.active_language if GlobalSettings else 0
+	var lexer = CustomLexer.new()
+	var parser = CustomParser.new()
+	
+	var tokens = lexer.tokenize(code, active_lang)
+	var ast = parser.parse(tokens, active_lang)
+	
+	if lexer.tokens and lexer.tokens.size() > 0 and ast.get("body").size() == 0:
+		emit_signal("compilation_failed", "Syntax processing returned empty structures. Double check formatting rules.", 1)
+		transition_to(GameState.CODING)
+		return
+		
+	transition_to(GameState.RUNNING)
+	active_interpreter = CustomInterpreter.new()
+	add_child(active_interpreter)
+	
+	active_interpreter.execution_cycle_completed.connect(_on_cycle_processed)
+	active_interpreter.runtime_error.connect(_on_runtime_error)
+	
+	await active_interpreter.execute(ast, target_unit)
+	
+	if state == GameState.RUNNING:
+		transition_to(GameState.CODING)
+
+func _on_cycle_processed(_node_info: Dictionary):
+	execution_cycles += 1
+	if SignalBus:
+		SignalBus.emit_signal("overheat_gauge_updated", float(execution_cycles) / max_allowed_cycles)
+	
+	if execution_cycles >= max_allowed_cycles:
+		transition_to(GameState.OVERHEATED)
+
+func _on_runtime_error(msg: String, line: int):
+	emit_signal("compilation_failed", msg, line)
+	transition_to(GameState.CODING)
+
+func _set_ide_visibility(is_visible: bool):
+	var root = get_tree().current_scene
+	if root and root.has_node("WorkspaceUI/IDE_UI"):
+		root.get_node("WorkspaceUI/IDE_UI").visible = is_visible
+
+func _display_defeat_modal(message: String):
+	if SignalBus and SignalBus.has_signal("level_ended"):
+		SignalBus.emit_signal("level_ended", false, message)
+
+func _display_victory_modal():
+	if SignalBus and SignalBus.has_signal("level_ended"):
+		SignalBus.emit_signal("level_ended", true, "Level Complete!")
+
+func _snapshot_entire_active_level() -> void:
+	level_origin_state.clear()
+	# programmable is not a group, let's use all possible units
+	for entity in get_tree().get_nodes_in_group("obstacles") + get_tree().get_nodes_in_group("enemies") + get_tree().get_nodes_in_group("pawns") + get_tree().get_nodes_in_group("warrior") + get_tree().get_nodes_in_group("archer"):
+		if entity.has_method("get_save_state"):
+			level_origin_state[entity.get_path()] = entity.get_save_state()
+
+func restore_level_state() -> void:
+	var swarm = get_node_or_null("/root/SwarmManager")
+	if swarm:
+		swarm.stop_swarm()
+		
+	for node_path in level_origin_state:
+		var node = get_node_or_null(node_path)
+		if node and node.has_method("rollback_to_start"):
+			node.rollback_to_start()

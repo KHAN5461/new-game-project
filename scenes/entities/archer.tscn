@@ -181,8 +181,8 @@ radius = 22.3607
 
 [node name="warrior" type="CharacterBody2D" unique_id=866586260 groups=["obstacles", "warrior"]]
 y_sort_enabled = true
-collision_layer = 2
-collision_mask = 29
+collision_layer = 0
+collision_mask = 0
 script = ExtResource("1_pkbmn")
 
 [node name="anim" type="AnimatedSprite2D" parent="." unique_id=1819742720]
@@ -204,7 +204,6 @@ autostart = true
 [node name="hitbox" type="Area2D" parent="." unique_id=266219544]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="hitbox" unique_id=377686402]
-visible = false
 position = Vector2(1, 6)
 shape = SubResource("CapsuleShape2D_1ugc4")
 debug_color = Color(0.176471, 0.631373, 0.333333, 0.658824)
@@ -213,12 +212,10 @@ metadata/_edit_lock_ = true
 [node name="attack zone" type="Area2D" parent="." unique_id=974526342]
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="attack zone" unique_id=1867020477]
-visible = false
 shape = SubResource("CircleShape2D_k7ywo")
 metadata/_edit_lock_ = true
 
 [node name="ProgressBar" type="ProgressBar" parent="." unique_id=1680767552]
-visible = false
 z_index = 5
 texture_filter = 1
 offset_left = -74.0

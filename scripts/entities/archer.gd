@@ -8,6 +8,11 @@ extends CharacterBody2D
 
 signal finished_action
 signal life_changed(current, max_val)
+signal finished_action
+
+var is_guarding: bool = false
+var is_dead: bool = false
+
 signal gold_changed(current)
 
 #timer for attacking
@@ -167,7 +172,7 @@ func speak(text: String) -> void:
 	dialog_timer.start(2.5)
 
 func _physics_process(delta: float) -> void:
-	if GameManager and GameManager.state != "RUNNING":
+	if GameManager and GameManager.state != GameManager.GameState.RUNNING:
 		if anim and anim.animation != "idle" and anim.animation != "dead":
 			anim.play("idle")
 			
@@ -192,6 +197,7 @@ func _physics_process(delta: float) -> void:
 		
 		if distance <= step:
 			position = target_position
+			velocity = Vector2.ZERO
 			is_moving = false
 			is_invulnerable = false
 			if state == 1:
@@ -202,7 +208,8 @@ func _physics_process(delta: float) -> void:
 						anim.play("idle")
 				)
 		else:
-			position = position.move_toward(target_position, step)
+			velocity = position.direction_to(target_position) * speed
+			move_and_slide()
 			
 	elif state == 0 and anim.animation != "idle" and not is_moving:
 		pass # Handled by the timer above
@@ -238,6 +245,17 @@ func turn_around() -> void:
 	call_deferred("emit_signal", "finished_action")
 
 func _check_direction(target_type: String, v_dir: Vector2) -> bool:
+	if not interaction_ray:
+		interaction_ray = RayCast2D.new()
+		add_child(interaction_ray)
+		interaction_ray.enabled = true
+		interaction_ray.collide_with_areas = true
+		interaction_ray.collide_with_bodies = true
+		interaction_ray.add_exception(self)
+		for child in get_children():
+			if child is CollisionObject2D:
+				interaction_ray.add_exception(child)
+				
 	interaction_ray.target_position = v_dir * tile_size
 	interaction_ray.force_raycast_update()
 	if interaction_ray.is_colliding():
@@ -557,7 +575,7 @@ func hit_stop(duration: float, time_scale: float) -> void:
 	Engine.time_scale = time_scale
 	if get_tree():
 		await get_tree().create_timer(duration * time_scale).timeout
-	if GameManager and GameManager.state == "RUNNING" and Global and Global.fast_execution:
+	if GameManager and GameManager.state == GameManager.GameState.RUNNING and Global and Global.fast_execution:
 		Engine.time_scale = 2.0
 	else:
 		Engine.time_scale = 1.0
@@ -621,3 +639,46 @@ func ranged_attack() -> void:
 	state = 0
 	is_invulnerable = false
 	finished_action.emit()
+
+
+func eval_sensor(sensor: String, args: Array = []) -> bool:
+	var arg = args[0] if args.size() > 0 else "obstacle"
+	match sensor:
+		"is_enemy_near":
+			return check_forward("enemy") or check_left("enemy") or check_right("enemy")
+		"check_forward":
+			return check_forward(arg)
+		"check_left":
+			return check_left(arg)
+		"check_right":
+			return check_right(arg)
+		_:
+			return false
+
+func execute_instruction(command: String, args: Array) -> void:
+	if is_dead:
+		call_deferred("emit_signal", "finished_action")
+		return
+		
+	if has_method(command):
+		var method_args = args if args.size() > 0 else []
+		callv(command, method_args)
+		await self.finished_action
+	else:
+		match command:
+			"guard":
+				is_guarding = true
+				if anim.sprite_frames.has_animation("shield"):
+					anim.play("shield")
+				await get_tree().create_timer(0.2).timeout
+				call_deferred("emit_signal", "finished_action")
+			"unstance":
+				is_guarding = false
+				anim.play("idle")
+				await get_tree().create_timer(0.1).timeout
+				call_deferred("emit_signal", "finished_action")
+			"wait":
+				await get_tree().create_timer(1.0).timeout
+				call_deferred("emit_signal", "finished_action")
+			_:
+				call_deferred("emit_signal", "finished_action")

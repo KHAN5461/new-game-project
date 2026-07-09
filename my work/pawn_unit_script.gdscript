@@ -1,0 +1,198 @@
+# scripts/entities/characters/pawn.gd
+extends ProgrammableUnit
+
+## Worker Pawn Entity class. Holds unique Carry-State tracking to match 
+## specialized resource animation sprite-sheets dynamically at runtime.
+
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var sprite: Sprite2D = $Sprite2D
+@onready var front_detector: RayCast2D = $RayCast2D
+@onready var action_area: Area2D = $ActionArea2D
+
+const TILE_SIZE: float = 64.0
+
+# Active carry-state suffix tracks animation frames:
+# "none", "axe", "gold", "hammer", "knife", "meat", "pickaxe", "wood"
+var carry_state: String = "none"
+
+func _on_unit_ready() -> void:
+	carry_state = "none"
+	_update_animation_state()
+
+func _on_state_restored() -> void:
+	carry_state = "none"
+	_update_animation_state()
+	animation_player.play(_get_anim_name("Idle"))
+
+# Override programmatically to add detection properties
+func _configure_physics_layers() -> void:
+	super._configure_physics_layers()
+	
+	# Configure Pawns Raycast to look for terrain, obstacles, and enemy boundaries
+	front_detector.collision_mask = 0
+	front_detector.set_collision_mask_value(1, true) # Layer 1: Terrain
+	front_detector.set_collision_mask_value(3, true) # Layer 3: Enemy Units
+	front_detector.set_collision_mask_value(4, true) # Layer 4: Obstacles
+
+# --- Animation Set State Managers ---
+
+func _get_anim_name(base_action: String) -> String:
+	# Tiny Swords uses specific carry state file names. E.g: "Pawn_Idle Wood" or "Pawn_Run Axe"
+	var state_suffix = ""
+	match carry_state:
+		"axe": state_suffix = " Axe"
+		"gold": state_suffix = " Gold"
+		"hammer": state_suffix = " Hammer"
+		"knife": state_suffix = " Knife"
+		"meat": state_suffix = " Meat"
+		"pickaxe": state_suffix = " Pickaxe"
+		"wood": state_suffix = " Wood"
+		_: state_suffix = ""
+		
+	return "Pawn_" + base_action + state_suffix
+
+func _update_animation_state() -> void:
+	# Dynamically swaps sprite sheets based on what the Pawn is carrying
+	# Note: Animators can set matching textures directly on sheet swaps inside Godot.
+	pass
+
+# --- Compiler Commands Execution ---
+
+func execute_instruction(command: String, args: Array) -> void:
+	if is_dead: return
+	
+	match command:
+		"move_forward":
+			var steps = args[0] if args.size() > 0 else 1
+			await _move_by_grid(steps)
+			
+		"turn_right":
+			await _rotate_angle(90)
+			
+		"turn_left":
+			await _rotate_angle(-90)
+			
+		"interact":
+			await _play_action_sequence("Interact")
+			_eval_adjacent_interactions()
+			
+		"harvest_wood":
+			carry_state = "axe"
+			await _play_action_sequence("Interact") # Chops with axe
+			_try_mine_resource("Trees", "wood")
+			
+		"mine_gold":
+			carry_state = "pickaxe"
+			await _play_action_sequence("Interact") # Mines with pick
+			_try_mine_resource("GoldStones", "gold")
+			
+		"build":
+			carry_state = "hammer"
+			await _play_action_sequence("Interact") # Builds with hammer
+			_try_build_structure()
+			
+		"clear_hands":
+			carry_state = "none"
+			animation_player.play(_get_anim_name("Idle"))
+			await get_tree().create_timer(0.1).timeout
+
+# --- Environmental Sensing Queries ---
+
+func eval_sensor(sensor: String) -> bool:
+	if is_dead: return false
+	
+	match sensor:
+		"is_blocked":
+			return front_detector.is_colliding()
+		"holds_wood":
+			return carry_state == "wood"
+		"holds_gold":
+			return carry_state == "gold"
+		"is_empty_handed":
+			return carry_state == "none"
+		"near_tree":
+			return _is_overlapping_group("Trees")
+		"near_gold":
+			return _is_overlapping_group("GoldStones")
+	return false
+
+# --- Grid-Movement Slide Engine ---
+
+func _move_by_grid(steps: int) -> void:
+	animation_player.play(_get_anim_name("Run"))
+	
+	var dir = Vector2.RIGHT.rotated(rotation)
+	var travel_offset = dir * TILE_SIZE * steps
+	var target_pos = global_position + travel_offset
+	
+	# Perform lookahead raycast check programmatically
+	front_detector.target_position = Vector2(TILE_SIZE * steps, 0)
+	front_detector.force_raycast_update()
+	
+	if front_detector.is_colliding():
+		# Safety fallback: block slide if path is obstructed, slide safely up to col point
+		var col_point = front_detector.get_collision_point()
+		target_pos = col_point - (dir * 24.0) # buffer distance
+		
+	var tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "global_position", target_pos, 0.35 * steps)
+	await tween.finished
+	
+	animation_player.play(_get_anim_name("Idle"))
+
+func _rotate_angle(degrees: float) -> void:
+	var tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	var target_rot = rotation_degrees + degrees
+	tween.tween_property(self, "rotation_degrees", target_rot, 0.22)
+	await tween.finished
+
+func _play_action_sequence(anim_type: String) -> void:
+	animation_player.play(_get_anim_name(anim_type))
+	# Base Tiny Swords anim lengths are around 0.6 seconds
+	await get_tree().create_timer(0.6).timeout
+	animation_player.play(_get_anim_name("Idle"))
+
+# --- Spatial Overlap sweep sensors ---
+
+func _is_overlapping_group(group_name: String) -> bool:
+	for body in action_area.get_overlapping_bodies():
+		if body.is_in_group(group_name):
+			return true
+	for area in action_area.get_overlapping_areas():
+		if area.is_in_group(group_name):
+			return true
+	return false
+
+func _eval_adjacent_interactions() -> void:
+	# Generic generic sweeping interaction (levers, switches, buttons, gates)
+	for area in action_area.get_overlapping_areas():
+		if area.has_method("interact"):
+			area.interact(self)
+		elif area.is_in_group("GoldMine") and carry_state == "gold":
+			# Deposit collected gold logic
+			carry_state = "none"
+			_on_deposit_gold()
+
+func _try_mine_resource(group: String, tool_type: String) -> void:
+	for area in action_area.get_overlapping_areas():
+		if area.is_in_group(group) and area.has_method("harvest"):
+			area.harvest(self)
+			carry_state = tool_type # update carry state to mined resource
+			return
+	# Reset state if no resource found
+	carry_state = "none"
+
+func _try_build_structure() -> void:
+	for body in action_area.get_overlapping_bodies():
+		if body.is_in_group("ConstructionSites") and body.has_method("add_progress"):
+			body.add_progress(25) # mallets add progress to structural nodes
+			return
+
+func _on_deposit_gold() -> void:
+	GlobalStats.gold_count += 10
+	SignalBus.emit_signal("rts_resources_updated")
+
+func _on_death() -> void:
+	animation_player.play("Pawn_Dead")
+	await get_tree().create_timer(1.2).timeout
+	super._on_death()

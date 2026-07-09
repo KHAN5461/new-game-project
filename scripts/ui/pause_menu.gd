@@ -18,7 +18,7 @@ func _input(event: InputEvent) -> void:
 			else:
 				# Don't pause if the game is over
 				var gm = get_node_or_null("/root/MainGame/GameManager")
-				if gm and (gm.state == "GAMEOVER" or gm.state == "VICTORY"): return
+				if gm and (gm.state == 7 or gm.state == 5): return # GAMEOVER or VICTORY
 				
 				show()
 				get_tree().paused = true

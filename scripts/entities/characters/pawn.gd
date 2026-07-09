@@ -34,12 +34,18 @@ var do=false
 # Variables
 var is_moving = false
 
+var starting_position: Vector2
+var starting_rotation_degrees: float
+var initial_hp: int = 10
 func seeker_setup():
 	if current_click_position:
 		navigation.target_position=current_click_position
 
 func _ready() -> void:
 	progress_bar.max_value=life
+	starting_position = global_position
+	starting_rotation_degrees = rotation_degrees
+	initial_hp = life
 	add_to_group("pawns")
 	add_to_group("obstacles")
 	# Add this pawn to the list of all pawns when it enters the scene
@@ -136,7 +142,10 @@ func die():
 	var skull_instance = skull_scene.instantiate()
 	get_parent().add_child(skull_instance)
 	skull_instance.global_position = global_position
-	queue_free()
+	hide()
+	process_mode = Node.PROCESS_MODE_DISABLED
+	collision_layer = 0
+	collision_mask = 0
 
 #detect the bodies entering
 @warning_ignore("unused_parameter")
@@ -173,3 +182,20 @@ func activate():
 	do= true
 	# Update the last active pawn to this one
 	last_active_index = all_pawns.find(self)
+
+func get_save_state() -> Dictionary:
+	return {
+		"position": starting_position,
+		"rotation": starting_rotation_degrees,
+		"hp": initial_hp
+	}
+
+func rollback_to_start() -> void:
+	global_position = starting_position
+	rotation_degrees = starting_rotation_degrees
+	life = initial_hp
+	state = 0
+	is_moving = false
+	show()
+	process_mode = Node.PROCESS_MODE_INHERIT
+	_configure_physics_layers()

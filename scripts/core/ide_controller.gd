@@ -262,7 +262,7 @@ func _on_run_button_pressed() -> void:
 		return
 		
 	if GameManager:
-		GameManager.state = "RUNNING"
+		GameManager.transition_to(2) # RUNNING
 		if Global and Global.fast_execution:
 			Engine.time_scale = 2.0
 		else:
@@ -283,13 +283,17 @@ func _on_run_button_pressed() -> void:
 			
 	if not any_ran:
 		print_error(1, "No programmed units found.")
+		_on_execution_finished()
+	elif swarm:
+		if swarm.has_signal("swarm_finished") and not swarm.swarm_finished.is_connected(_on_execution_finished):
+			swarm.swarm_finished.connect(_on_execution_finished, CONNECT_ONE_SHOT)
 
 func _on_step_button_pressed() -> void:
 	if not code_edit: return
 	var swarm = get_node_or_null("/root/SwarmManager")
 	if not swarm: return
 	
-	if GameManager and GameManager.state == "RUNNING":
+	if GameManager and GameManager.state == 2: # RUNNING
 		print_error(1, "Stepping...")
 		swarm.step_swarm()
 	else:
@@ -306,7 +310,7 @@ func _on_step_button_pressed() -> void:
 			return
 			
 		if GameManager:
-			GameManager.state = "RUNNING"
+			GameManager.transition_to(2) # RUNNING
 			Engine.time_scale = 1.0
 			GameManager.lines_of_code = code_text.strip_edges().split("\n").size()
 			GameManager.execution_cycles = 0
@@ -319,6 +323,10 @@ func _on_step_button_pressed() -> void:
 		var any_ran = swarm.run_swarm(Global.script_inventory, true)
 		if not any_ran:
 			print_error(1, "No programmed units found.")
+			_on_execution_finished()
+		else:
+			if swarm.has_signal("swarm_finished") and not swarm.swarm_finished.is_connected(_on_execution_finished):
+				swarm.swarm_finished.connect(_on_execution_finished, CONNECT_ONE_SHOT)
 			
 		# Automatically fire the first step so it enters the first line!
 		await get_tree().process_frame
@@ -330,7 +338,7 @@ func _on_stop_button_pressed() -> void:
 		swarm.stop_swarm()
 	
 	if GameManager:
-		GameManager.state = "IDLE"
+		GameManager.transition_to(0) # CODING
 		Engine.time_scale = 1.0
 		
 	if code_edit:
@@ -340,7 +348,7 @@ func _on_stop_button_pressed() -> void:
 
 func _on_execution_finished() -> void:
 	if GameManager:
-		GameManager.state = "IDLE"
+		GameManager.transition_to(0) # CODING
 		Engine.time_scale = 1.0
 		
 	if code_edit:
@@ -350,7 +358,7 @@ func _on_execution_finished() -> void:
 
 func _on_execution_error(msg: String, line: int = -1) -> void:
 	if GameManager:
-		GameManager.state = "IDLE"
+		GameManager.transition_to(0) # CODING
 		Engine.time_scale = 1.0
 	if code_edit and line > 0:
 		code_edit.set_line_background_color(line - 1, Color(0.8, 0.2, 0.2, 0.5))

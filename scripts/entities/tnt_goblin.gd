@@ -58,7 +58,7 @@ func _can_move_in_direction(dir: Vector2) -> bool:
 var alerted: bool = false
 
 func _on_ai_tick() -> void:
-	if GameManager and GameManager.state != "RUNNING": return
+	if GameManager and GameManager.state != GameManager.GameState.RUNNING: return
 	if is_moving or state == 2: return
 	
 	var warrior = get_tree().get_first_node_in_group("warrior")
@@ -161,11 +161,13 @@ func _physics_process(delta: float) -> void:
 		var step = speed * delta
 		if distance <= step:
 			position = target_position
+			velocity = Vector2.ZERO
 			is_moving = false
 			state = 0
 			anim_row = 0
 		else:
-			position = position.move_toward(target_position, step)
+			velocity = position.direction_to(target_position) * speed
+			move_and_slide()
 			
 	if sprite:
 		anim_timer += delta

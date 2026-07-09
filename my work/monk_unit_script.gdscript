@@ -1,0 +1,110 @@
+# scripts/entities/characters/monk.gd
+extends ProgrammableUnit
+
+## Healing support cleric Monk. Channels localized AoE heal spells.
+
+@onready var animation_player: AnimationPlayer = $AnimationPlayer
+@onready var heal_aura: Area2D = $HealAura
+@onready var heal_effect_sprite: AnimatedSprite2D = $HealEffectSprite
+
+const TILE_SIZE: float = 64.0
+
+func _on_unit_ready() -> void:
+	animation_player.play("Monk_Idle")
+	heal_effect_sprite.visible = false
+
+func _on_state_restored() -> void:
+	animation_player.play("Monk_Idle")
+	heal_effect_sprite.visible = false
+
+# Override to establish Monk scanning Area layers
+func _configure_physics_layers() -> void:
+	super._configure_physics_layers()
+	
+	# Configure Monk Heal Sweep Area to capture damaged Player Allies on Layer 2
+	heal_aura.collision_mask = 0
+	heal_aura.set_collision_mask_value(2, true) # Layer 2: Player_Units
+
+# --- Compiler Commands Execution ---
+
+func execute_instruction(command: String, args: Array) -> void:
+	if is_dead: return
+	
+	match command:
+		"move_forward":
+			var steps = args[0] if args.size() > 0 else 1
+			await _move_by_grid(steps)
+			
+		"turn_right":
+			await _rotate_angle(90)
+			
+		"turn_left":
+			await _rotate_angle(-90)
+			
+		"heal":
+			await _channel_healing_spell()
+
+# --- Monk Sensing Queries ---
+
+func eval_sensor(sensor: String) -> bool:
+	if is_dead: return false
+	
+	match sensor:
+		"allies_need_healing":
+			return _damaged_allies_present()
+	return false
+
+func _damaged_allies_present() -> bool:
+	for body in heal_aura.get_overlapping_bodies():
+		if body.is_in_group("PlayerUnits") and body.has_method("current_hp"):
+			if body.current_hp < body.max_hp:
+				return true
+	return false
+
+# --- Magic AoE Healing channels ---
+
+func _channel_healing_spell() -> void:
+	animation_player.play("Monk_Heal")
+	
+	# Trigger Heal channeling effect sprite
+	heal_effect_sprite.visible = true
+	heal_effect_sprite.play("Heal_Effect_Active")
+	
+	# Looping Monk heal sequence duration
+	await get_tree().create_timer(1.2).timeout
+	
+	# Distribute healing values to overlapping allies
+	_apply_aoe_heal_effect(30)
+	
+	heal_effect_sprite.visible = false
+	heal_effect_sprite.stop()
+	animation_player.play("Monk_Idle")
+
+func _apply_aoe_heal_effect(heal_amount: int) -> void:
+	for body in heal_aura.get_overlapping_bodies():
+		if body != self and body.has_method("heal_hp"):
+			body.heal_hp(heal_amount)
+
+# --- Move Grid Controllers ---
+
+func _move_by_grid(steps: int) -> void:
+	animation_player.play("Monk_Run")
+	var dir = Vector2.RIGHT.rotated(rotation)
+	var target_pos = global_position + (dir * TILE_SIZE * steps)
+	
+	var tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_OUT)
+	tween.tween_property(self, "global_position", target_pos, 0.35 * steps)
+	await tween.finished
+	
+	animation_player.play("Monk_Idle")
+
+func _rotate_angle(degrees: float) -> void:
+	var tween = create_tween().set_trans(Tween.TRANS_QUAD).set_ease(Tween.EASE_IN_OUT)
+	var target_rot = rotation_degrees + degrees
+	tween.tween_property(self, "rotation_degrees", target_rot, 0.22)
+	await tween.finished
+
+func _on_death() -> void:
+	animation_player.play("Monk_Dead")
+	await get_tree().create_timer(1.2).timeout
+	super._on_death()

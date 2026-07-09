@@ -11,6 +11,8 @@ signal closed
 func _ready() -> void:
 	back_btn.pressed.connect(func(): hide(); closed.emit())
 	
+	_add_language_dropdown()
+	
 	if Global:
 		auto_check.button_pressed = Global.autocomplete_enabled
 		fast_check.button_pressed = Global.fast_execution
@@ -41,3 +43,31 @@ func _on_full_toggled(toggled_on: bool) -> void:
 func _on_ide_left_toggled(toggled_on: bool) -> void:
 	if Global: Global.ide_on_left = toggled_on
 	if Global: Global.save_game()
+
+func _add_language_dropdown():
+	var vbox = $CenterContainer/NinePatchRect/VBoxContainer
+	var hbox = HBoxContainer.new()
+	var label = Label.new()
+	label.text = "Language: "
+	label.add_theme_font_size_override("font_size", 16)
+	label.add_theme_color_override("font_color", Color.WHITE)
+	
+	var lang_option = OptionButton.new()
+	lang_option.add_item("Python", 0)
+	lang_option.add_item("C++", 1)
+	lang_option.add_item("Java", 2)
+	
+	if GlobalSettings:
+		lang_option.select(GlobalSettings.active_language)
+	
+	lang_option.item_selected.connect(_on_language_selected)
+	
+	hbox.add_child(label)
+	hbox.add_child(lang_option)
+	vbox.add_child(hbox)
+	vbox.move_child(hbox, 0) # Move to the top
+
+func _on_language_selected(index: int):
+	if GlobalSettings:
+		GlobalSettings.active_language = index
+		GlobalSettings.save_settings()

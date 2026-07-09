@@ -1,0 +1,74 @@
+Created At: 2026-07-08T16:15:39Z
+Completed At: 2026-07-08T16:15:39Z
+The following changes were made by the multi_replace_file_content tool to: C:\Users\Admin\Documents\new-game-project\scripts\entities\warrior.gd. If relevant, proactively run terminal commands to execute this code for the USER. Don't ask for permission.
+[diff_block_start]
+@@ -416,18 +416,18 @@
+ 	
+ 	if movement_direction.x > 0:
+ 		dir = 1
+-		anim.play("run")
++		if anim.animation != "run": anim.play("run")
+ 		anim.flip_h = false
+ 	elif movement_direction.x < 0:
+ 		dir = 1
+-		anim.play("run")
++		if anim.animation != "run": anim.play("run")
+ 		anim.flip_h = true
+ 	elif movement_direction.y < 0:
+ 		dir = 2
+-		anim.play("run")
++		if anim.animation != "run": anim.play("run")
+ 	elif movement_direction.y > 0:
+ 		dir = -2
+-		anim.play("run")
++		if anim.animation != "run": anim.play("run")
+ 
+ func unlock_gate(key_name: String = "") -> void:
+ 	if is_moving or state == 2:
+@@ -691,4 +691,43 @@
+ 	if get_tree():
+ 		await get_tree().create_timer(0.5).timeout
+ 	if is_instance_valid(dust): dust.queue_free()
++
++func execute_instruction(command: String, args: Array):
++	if is_dead:
++		call_deferred("emit_signal", "finished_action")
++		return
++		
++	match command:
++		"move_forward":
++			move_forward()
++		"move_left":
++			turn_left()
++			move_forward()
++		"move_right":
++			turn_right()
++			move_forward()
++		"move_backward":
++			turn_around()
++			move_forward()
++		"attack":
++			attack()
++		"wait":
++			wait()
++		_:
++			call_deferred("emit_signal", "finished_action")
++			
++	await self.finished_action
++
++func eval_sensor(sensor: String) -> bool:
++	match sensor:
++		"is_enemy_near":
++			return is_enemy_near()
++		"check_forward":
++			return check_forward()
++		"check_left":
++			return check_left()
++		"check_right":
++			return check_right()
++		_:
++			return false
+ 
+[diff_block_end]
+
+Please note that the above snippet only shows the MODIFIED lines from the last change. It shows up to 3 lines of unchanged lines before and after the modified lines. The actual file contents may have many more lines not shown.

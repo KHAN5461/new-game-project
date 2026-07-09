@@ -1,0 +1,125 @@
+# scripts/entities/characters/programmable_unit.gd
+class_name ProgrammableUnit
+extends CharacterBody2D
+
+## Base class for all programmable entities in the Tiny Swords universe.
+## Standardizes physics configuration, health transactions, status tracking, and 
+## handles high-fidelity snapshot rollbacks for the Game State Machine (GSM).
+
+signal health_changed(new_hp: int, max_hp: int)
+signal died(unit: ProgrammableUnit)
+
+@export_category("Unit Configuration")
+@export var max_hp: int = 100
+@export var speed: float = 120.0
+@export var unit_team: String = "Player" # "Player" or "Enemy"
+
+var current_hp: int = 100
+var is_dead: bool = false
+
+# Snapshot caches for high-fidelity transactional rollbacks
+var starting_position: Vector2
+var starting_rotation_degrees: float
+var starting_scale: Vector2
+var starting_visible: bool
+
+func _ready() -> void:
+	current_hp = max_hp
+	is_dead = false
+	
+	# Cache original state on initial load
+	starting_position = global_position
+	starting_rotation_degrees = rotation_degrees
+	starting_scale = scale
+	starting_visible = visible
+	
+	_configure_physics_layers()
+	_on_unit_ready()
+
+## Concrete units override this to configure custom layers & masksprogrammatically
+func _configure_physics_layers() -> void:
+	collision_layer = 0
+	collision_mask = 0
+	
+	if unit_team == "Player":
+		set_collision_layer_value(2, true)  # Layer 2: Player_Units
+		# Blocked by: Terrain (1), Other Players (2), Enemies (3), Obstacles (4)
+		set_collision_mask_value(1, true)
+		set_collision_mask_value(2, true)
+		set_collision_mask_value(3, true)
+		set_collision_mask_value(4, true)
+	else:
+		set_collision_layer_value(3, true)  # Layer 3: Enemy_Units
+		# Blocked by: Terrain (1), Players (2), Other Enemies (3), Obstacles (4)
+		set_collision_mask_value(1, true)
+		set_collision_mask_value(2, true)
+		set_collision_mask_value(3, true)
+		set_collision_mask_value(4, true)
+
+func _on_unit_ready() -> void:
+	pass
+
+# --- Transactional Snapshots & State Rollbacks ---
+
+func get_save_state() -> Dictionary:
+	return {
+		"position": global_position,
+		"rotation_degrees": rotation_degrees,
+		"scale": scale,
+		"visible": visible,
+		"current_hp": current_hp,
+		"is_dead": is_dead
+	}
+
+func load_saved_state(state_data: Dictionary) -> void:
+	global_position = state_data.get("position", starting_position)
+	rotation_degrees = state_data.get("rotation_degrees", starting_rotation_degrees)
+	scale = state_data.get("scale", starting_scale)
+	visible = state_data.get("visible", starting_visible)
+	current_hp = state_data.get("current_hp", max_hp)
+	is_dead = state_data.get("is_dead", false)
+	
+	health_changed.emit(current_hp, max_hp)
+	_on_state_restored()
+
+func _on_state_restored() -> void:
+	pass
+
+# --- Health & Combat Transactions ---
+
+func take_damage(amount: int) -> void:
+	if is_dead: return
+	
+	current_hp = max(0, current_hp - amount)
+	health_changed.emit(current_hp, max_hp)
+	
+	_on_damaged(amount)
+	
+	if current_hp <= 0:
+		_die()
+
+func heal_hp(amount: int) -> void:
+	if is_dead: return
+	current_hp = min(max_hp, current_hp + amount)
+	health_changed.emit(current_hp, max_hp)
+
+func _on_damaged(_amount: int) -> void:
+	pass
+
+func _die() -> void:
+	is_dead = true
+	died.emit(self)
+	_on_death()
+
+func _on_death() -> void:
+	queue_free()
+
+# --- Interface Contracts for Lexer/Parser/Interpreter Routing ---
+
+func execute_instruction(_command: String, _args: Array) -> void:
+	# Virtual stub implemented by subclass
+	await get_tree().process_frame
+
+func eval_sensor(_sensor: String) -> bool:
+	# Virtual stub implemented by subclass
+	return false

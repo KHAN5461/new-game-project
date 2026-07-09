@@ -1,5 +1,10 @@
 extends CharacterBody2D
 
+signal finished_action
+var is_guarding: bool = false
+var is_dead: bool = false
+
+
 @export var tile_size: int = 64
 @export var speed: float = 150.0
 @export var detection_radius_tiles: int = 4
@@ -22,9 +27,20 @@ var is_moving: bool = false
 var target_position: Vector2
 var state: int = 0 # 0=idle, 1=moving, 2=attacking
 
+var starting_position: Vector2
+var starting_rotation_degrees: float
+var initial_hp: int = 30
+var current_hp: int = 30
+
 func _ready() -> void:
 	add_to_group("enemies")
 	add_to_group("obstacles")
+	
+	starting_position = global_position
+	starting_rotation_degrees = rotation_degrees
+	
+	_configure_physics_layers()
+	
 	target_position = position
 	
 	if sprite:
@@ -160,11 +176,13 @@ func _physics_process(delta: float) -> void:
 		var step = speed * delta
 		if distance <= step:
 			position = target_position
+			velocity = Vector2.ZERO
 			is_moving = false
 			state = 0
 			anim_row = 0
 		else:
-			position = position.move_toward(target_position, step)
+			velocity = position.direction_to(target_position) * speed
+			move_and_slide()
 			
 	if sprite:
 		anim_timer += delta
@@ -196,4 +214,67 @@ func take_damage(amount: int = 1) -> void:
 			var meat = preload("res://scenes/entities/meat.tscn").instantiate()
 			meat.global_position = global_position
 			get_tree().current_scene.call_deferred("add_child", meat)
-		queue_free()
+		hide()
+		process_mode = Node.PROCESS_MODE_DISABLED
+		collision_layer = 0
+		collision_mask = 0
+
+func _configure_physics_layers() -> void:
+	collision_layer = 0
+	set_collision_layer_value(3, true) # Layer 3: Enemies
+	
+	collision_mask = 0
+	set_collision_mask_value(1, true)
+	set_collision_mask_value(2, true)
+	set_collision_mask_value(3, true)
+	set_collision_mask_value(4, true)
+
+func get_save_state() -> Dictionary:
+	return {
+		"position": starting_position,
+		"rotation": starting_rotation_degrees,
+		"hp": initial_hp
+	}
+
+func rollback_to_start() -> void:
+	global_position = starting_position
+	rotation_degrees = starting_rotation_degrees
+	current_hp = initial_hp
+	state = 0
+	is_moving = false
+	target_position = position
+	show()
+	process_mode = Node.PROCESS_MODE_INHERIT
+	_configure_physics_layers()
+	if sprite: 
+		sprite.frame = 0
+		anim_row = 0
+
+
+func eval_sensor(sensor: String, args: Array = []) -> bool:
+	return false
+
+func execute_instruction(command: String, args: Array) -> void:
+	if is_dead:
+		call_deferred("emit_signal", "finished_action")
+		return
+		
+	if has_method(command):
+		var method_args = args if args.size() > 0 else []
+		callv(command, method_args)
+		await self.finished_action
+	else:
+		match command:
+			"guard":
+				is_guarding = true
+				await get_tree().create_timer(0.2).timeout
+				call_deferred("emit_signal", "finished_action")
+			"unstance":
+				is_guarding = false
+				await get_tree().create_timer(0.1).timeout
+				call_deferred("emit_signal", "finished_action")
+			"wait":
+				await get_tree().create_timer(1.0).timeout
+				call_deferred("emit_signal", "finished_action")
+			_:
+				call_deferred("emit_signal", "finished_action")
