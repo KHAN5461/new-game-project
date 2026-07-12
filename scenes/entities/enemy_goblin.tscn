@@ -8,9 +8,9 @@ radius = 24.0
 height = 64.0
 
 [node name="EnemyGoblin" type="CharacterBody2D"]
+collision_layer = 2
+collision_mask = 5
 y_sort_enabled = true
-collision_layer = 4
-collision_mask = 19
 script = ExtResource("1_abcde")
 speed = 225.0
 

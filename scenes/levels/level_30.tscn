@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://dsj6njqf0r4e5" path="res://scenes/entities/warrior.tscn" id="2_warrior"]
 [ext_resource type="PackedScene" uid="uid://archuid1234" path="res://scenes/entities/archer.tscn" id="3_archer"]
 [ext_resource type="PackedScene" uid="uid://bossuid1234" path="res://scenes/entities/boss_goblin.tscn" id="4_boss"]
+[ext_resource type="Script" path="res://scripts/core/level_objective.gd" id="LevelObjective_Script_1"]
 
 [node name="Level11" type="Node2D"]
 y_sort_enabled = true
@@ -27,3 +28,6 @@ position = Vector2(384, 128)
 
 [node name="Goal" type="Area2D" parent="Entities" groups=["goals"]]
 position = Vector2(384, 0)
+
+[node name="LevelObjective" type="Node" parent="."]
+script = ExtResource("LevelObjective_Script_1")

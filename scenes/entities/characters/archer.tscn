@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cptl2n7cw6ub7"]
 
-[ext_resource type="Script" uid="uid://bn17xvjcorvcd" path="res://scripts/entities/characters/archer.gd" id="1_41ngi"]
+[ext_resource type="Script" uid="uid://bn17xvjcorvcd" path="res://scripts/entities/archer.gd" id="1_41ngi"]
 [ext_resource type="Texture2D" uid="uid://bp0sxw620m0mc" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Archer/Archer_Idle.png" id="2_xtdlk"]
 [ext_resource type="Texture2D" uid="uid://bbj83tb6caj2u" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Archer/Archer_Run.png" id="3_ya0x5"]
 [ext_resource type="Texture2D" uid="uid://ddefua3idomor" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Archer/Archer_Shoot.png" id="4_jay5b"]
@@ -179,7 +179,10 @@ animations = [{
 "speed": 10.0
 }]
 
-[node name="archer" type="CharacterBody2D" unique_id=1841644912 groups=["obstacles"]]
+[node name="archer" type="CharacterBody2D" unique_id=1841644912 groups=["obstacles"]
+collision_layer = 1
+collision_mask = 54
+]
 script = ExtResource("1_41ngi")
 
 [node name="shape" type="CollisionShape2D" parent="." unique_id=834595065]

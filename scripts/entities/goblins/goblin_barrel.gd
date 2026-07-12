@@ -5,7 +5,7 @@ extends CharacterBody2D
 @onready var dectector_zone: Area2D = $"dectector zone"
 @onready var anim: AnimatedSprite2D = $anim
 @onready var goblin_barrel: CharacterBody2D = $"."
-@onready var game_manager: Node2D = $"../.."
+@onready var game_manager: Node = $"../.."
 
 
 var state=0

@@ -23,6 +23,8 @@ radius = 7.0
 height = 68.0
 
 [node name="arrow" type="Area2D"]
+collision_layer = 32
+collision_mask = 3
 script = ExtResource("1_bw8sv")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]

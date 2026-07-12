@@ -12,13 +12,10 @@ func _ready() -> void:
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.is_in_group("pawns"):
-		var timer=get_tree().create_timer(0.5)
-		timer.timeout.connect(self.die)
-	if body.name=="warrior":
-		var timer=get_tree().create_timer(0.5)
-		timer.timeout.connect(self.die)
-
-func die():
+		if body.has_method("add_to_inventory"):
+			body.add_to_inventory("wood", 1)
 		queue_free()
+	elif body.name == "warrior":
 		Stats.add_wood()
+		queue_free()
 

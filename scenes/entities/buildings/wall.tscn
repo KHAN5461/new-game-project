@@ -1,0 +1,86 @@
+[gd_scene format=3 uid="uid://ij2bnhw84r0v"]
+
+[ext_resource type="Script" uid="uid://bs6iv4ny50eq8" path="res://scripts/entities/units_sets/wall.gd" id="1_d71j4"]
+[ext_resource type="Texture2D" uid="uid://bolcxlp8f3xfi" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Destroyed.png" id="1_y1uij"]
+[ext_resource type="PackedScene" uid="uid://bwgu8vvuqgsk0" path="res://scenes/entities/characters/pawn.tscn" id="2_h77ek"]
+[ext_resource type="Texture2D" uid="uid://gxsau34gkq5e" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png" id="3_b5qss"]
+[ext_resource type="Texture2D" uid="uid://b1en7qs5auwgj" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Buildings/Castle/Castle_Construction.png" id="4_pxja6"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_3j387"]
+atlas = ExtResource("4_pxja6")
+region = Rect2(0, 0, 128, 192)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_bfkp7"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("1_y1uij")
+}],
+"loop": 1,
+"name": &"destroyed",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_3j387")
+}],
+"loop": 1,
+"name": &"idle",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": ExtResource("3_b5qss")
+}],
+"loop": 1,
+"name": &"under_construction",
+"speed": 5.0
+}]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_5lfvc"]
+radius = 80.0
+height = 204.0
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_obymh"]
+radius = 55.0
+height = 146.0
+
+[node name="wall" type="StaticBody2D" unique_id=663278937 groups=["build"]
+collision_layer = 4
+collision_mask = 0
+]
+texture_filter = 1
+script = ExtResource("1_d71j4")
+pawn_scene = ExtResource("2_h77ek")
+
+[node name="anim" type="AnimatedSprite2D" parent="." unique_id=1683881833]
+sprite_frames = SubResource("SpriteFrames_bfkp7")
+animation = &"destroyed"
+autoplay = "under_construction"
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=542449648]
+visible = false
+position = Vector2(0, 4)
+shape = SubResource("CapsuleShape2D_5lfvc")
+metadata/_edit_lock_ = true
+
+[node name="Marker2D" type="Marker2D" parent="." unique_id=503721062]
+position = Vector2(0, 102)
+metadata/_edit_lock_ = true
+
+[node name="Timer" type="Timer" parent="." unique_id=1078759090]
+wait_time = 20.0
+
+[node name="wall" type="Area2D" parent="." unique_id=1330950777]
+metadata/_edit_lock_ = true
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="wall" unique_id=761970706]
+visible = false
+position = Vector2(-2, 34)
+shape = SubResource("CapsuleShape2D_obymh")
+debug_color = Color(0.729412, 0.470588, 0.0823529, 0.286275)
+metadata/_edit_lock_ = true
+
+[connection signal="area_shape_exited" from="wall" to="." method="_on_wall_area_shape_exited"]
+[connection signal="body_entered" from="wall" to="." method="_on_wall_body_entered"]

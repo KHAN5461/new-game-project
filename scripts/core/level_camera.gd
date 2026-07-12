@@ -10,6 +10,12 @@ func shake(intensity: float = 10.0) -> void:
 
 var base_pos: Vector2
 
+var target_zoom: float = 0.6
+var min_zoom: float = 0.3
+var max_zoom: float = 2.0
+var zoom_speed: float = 0.05
+var zoom_lerp_speed: float = 10.0
+
 func _ready() -> void:
     zoom = Vector2(0.6, 0.6)
     position_smoothing_enabled = true
@@ -17,6 +23,13 @@ func _ready() -> void:
     
     global_position = Vector2(800, 200)
     base_pos = global_position
+
+func _unhandled_input(event: InputEvent) -> void:
+    if event is InputEventMouseButton:
+        if event.button_index == MOUSE_BUTTON_WHEEL_UP:
+            target_zoom = min(target_zoom + zoom_speed, max_zoom)
+        elif event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
+            target_zoom = max(target_zoom - zoom_speed, min_zoom)
     
 func _process(delta: float) -> void:
     if not warrior:
@@ -38,3 +51,5 @@ func _process(delta: float) -> void:
         global_position = target_pos + Vector2(offset_x, offset_y)
     else:
         global_position = global_position.lerp(target_pos, 5.0 * delta)
+        
+    zoom = zoom.lerp(Vector2(target_zoom, target_zoom), zoom_lerp_speed * delta)

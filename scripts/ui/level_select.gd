@@ -33,6 +33,41 @@ func _ready() -> void:
 	back_btn.add_theme_stylebox_override("hover", back_hover)
 	back_btn.add_theme_stylebox_override("pressed", back_pressed)
 	
+	# Instantiate Tech Tree Button
+	var tech_tree_btn = Button.new()
+	tech_tree_btn.text = "RESEARCH"
+	tech_tree_btn.custom_minimum_size = Vector2(250, 70)
+	tech_tree_btn.position = Vector2(1152 - 280, 30)
+	tech_tree_btn.add_theme_font_size_override("font_size", 20)
+	
+	var tech_style = StyleBoxTexture.new()
+	tech_style.texture = load("res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Blue_9Slides.png")
+	tech_style.texture_margin_left = 20
+	tech_style.texture_margin_top = 20
+	tech_style.texture_margin_right = 20
+	tech_style.texture_margin_bottom = 20
+	
+	var tech_hover = StyleBoxTexture.new()
+	tech_hover.texture = load("res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Hover_9Slides.png")
+	tech_hover.texture_margin_left = 20
+	tech_hover.texture_margin_top = 20
+	tech_hover.texture_margin_right = 20
+	tech_hover.texture_margin_bottom = 20
+	
+	var tech_pressed = StyleBoxTexture.new()
+	tech_pressed.texture = load("res://assets/Tiny Swords (Update 010)/UI/Buttons/Button_Blue_9Slides_Pressed.png")
+	tech_pressed.texture_margin_left = 20
+	tech_pressed.texture_margin_top = 20
+	tech_pressed.texture_margin_right = 20
+	tech_pressed.texture_margin_bottom = 20
+	
+	tech_tree_btn.add_theme_stylebox_override("normal", tech_style)
+	tech_tree_btn.add_theme_stylebox_override("hover", tech_hover)
+	tech_tree_btn.add_theme_stylebox_override("pressed", tech_pressed)
+	
+	tech_tree_btn.pressed.connect(func(): SceneTransition.change_scene("res://scenes/ui/tech_tree.tscn"))
+	add_child(tech_tree_btn)
+	
 
 	
 	for i in range(Global.levels.size()):
@@ -40,13 +75,22 @@ func _ready() -> void:
 		var level_data = Global.levels[i]
 		
 		btn.text = str(i + 1)
-		btn.custom_minimum_size = Vector2(100, 100)
-		btn.add_theme_font_size_override("font_size", 32)
 		
 		var unlocked = true
 		if Global and i >= Global.max_unlocked_level:
 			unlocked = false
 			
+		if unlocked and Global and Global.level_stars.has(str(i + 1)):
+			var stars = Global.level_stars[str(i + 1)]
+			var star_str = ""
+			for s in range(3):
+				if s < stars: star_str += "★"
+				else: star_str += "☆"
+			btn.text += "\n" + star_str
+			
+		btn.custom_minimum_size = Vector2(100, 100)
+		btn.add_theme_font_size_override("font_size", 32)
+		
 		var normal_style = StyleBoxTexture.new()
 		normal_style.texture_margin_left = 20
 		normal_style.texture_margin_top = 20

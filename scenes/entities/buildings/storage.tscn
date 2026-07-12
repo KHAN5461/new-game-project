@@ -1,0 +1,23 @@
+[gd_scene load_steps=5 format=3 uid="uid://storage_house_1234"]
+
+[ext_resource type="Script" path="res://scripts/entities/buildings/storage.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://House3_UID" path="res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/House3.png" id="2_texture"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 128, 192)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_1"]
+size = Vector2(100, 100)
+
+[node name="StorageHouse" type="StaticBody2D" groups=["build", "house", "storage"]]
+texture_filter = 1
+script = ExtResource("1_script")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -32)
+texture = SubResource("AtlasTexture_1")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, 10)
+shape = SubResource("RectangleShape2D_1")

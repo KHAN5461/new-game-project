@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cda1u3jx42f7x"]
 
-[ext_resource type="Script" path="res://scripts/ui/game_hud.gd" id="1_2uf8q"]
+[ext_resource type="Script" path="res://scripts/core/ide_controller.gd" id="1_2uf8q"]
 [ext_resource type="Texture2D" uid="uid://dxq8unbncbmlh" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner_Slots.png" id="2_banner_slots"]
 [ext_resource type="Texture2D" uid="uid://yn2uhrc3yckk" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Banners/Banner.png" id="3_banner"]
 [ext_resource type="Texture2D" uid="uid://cdijmmp3d5poc" path="res://assets/Tiny Swords (Free Pack)/UI Elements/UI Elements/Wood Table/WoodTable.png" id="4_wood"]

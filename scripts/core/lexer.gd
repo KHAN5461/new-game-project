@@ -8,15 +8,16 @@ enum TokenType {
 	IDENTIFIER, NUMBER, STRING,  
 	# Operators  
 	ASSIGN, EQUALS, NOT_EQUALS, LESS_THAN, GREATER_THAN, LESS_EQUAL, GREATER_EQUAL,  
-	AND, OR, NOT,  
+	AND, OR, NOT, PLUS, MINUS, MULTIPLY, DIVIDE,
 	# Keywords  
-	IF, ELIF, ELSE, WHILE, FOR, IN, PASS, BREAK, CONTINUE,  
+	IF, ELIF, ELSE, WHILE, FOR, IN, PASS, BREAK, CONTINUE, VAR, DEF,
 	# Structure  
 	LPAREN, RPAREN, LBRACE, RBRACE, COLON, COMMA, SEMICOLON,  
 	# Indentation (Python only)  
 	INDENT, DEDENT,  
 	# Control  
-	EOF  
+	EOF,
+	DOT
 }
 
 class Token:  
@@ -45,19 +46,20 @@ const KEYWORDS_PYTHON = {
 	"if": TokenType.IF, "elif": TokenType.ELIF, "else": TokenType.ELSE,  
 	"while": TokenType.WHILE, "for": TokenType.FOR, "in": TokenType.IN,  
 	"pass": TokenType.PASS, "break": TokenType.BREAK, "continue": TokenType.CONTINUE,  
-	"and": TokenType.AND, "or": TokenType.OR, "not": TokenType.NOT  
+	"and": TokenType.AND, "or": TokenType.OR, "not": TokenType.NOT, "var": TokenType.VAR,
+	"def": TokenType.DEF
 }
 
 const KEYWORDS_CPP_JAVA = {  
 	"if": TokenType.IF, "else": TokenType.ELSE, "while": TokenType.WHILE,  
 	"for": TokenType.FOR, "break": TokenType.BREAK, "continue": TokenType.CONTINUE,  
-	"and": TokenType.AND, "or": TokenType.OR, "not": TokenType.NOT,  
-	"void": TokenType.PASS, "int": TokenType.PASS, "float": TokenType.PASS, "boolean": TokenType.PASS  
+	"and": TokenType.AND, "or": TokenType.OR, "not": TokenType.NOT, "var": TokenType.VAR,
+	"void": TokenType.DEF, "int": TokenType.PASS, "float": TokenType.PASS, "boolean": TokenType.PASS  
 }
 
-func tokenize(_source: String, mode: LanguageMode = LanguageMode.PYTHON) -> Array[Token]:  
+func tokenize(code: String, mode: LanguageMode = LanguageMode.PYTHON) -> Array[Token]:  
+	source = code + "\n"  
 	language_mode = mode  
-	source = _source  
 	cursor = 0  
 	line = 1  
 	column = 1  
@@ -71,7 +73,7 @@ func tokenize(_source: String, mode: LanguageMode = LanguageMode.PYTHON) -> Arra
 		if language_mode == LanguageMode.PYTHON and is_at_line_start:  
 			var indent_spaces = _evaluate_indentation()  
 			if indent_spaces == -1: # Empty line or comment, skip handling indent  
-				_skip_to_newline()  
+				is_at_line_start = false  
 				continue  
 				  
 			var current_indent = indent_stack.back()  
@@ -136,6 +138,24 @@ func tokenize(_source: String, mode: LanguageMode = LanguageMode.PYTHON) -> Arra
 		if current_char == ";":  
 			tokens.append(Token.new(TokenType.SEMICOLON, ";", line, column))  
 			_advance()  
+			continue
+			
+		# Math Operators
+		if current_char == "+":
+			tokens.append(Token.new(TokenType.PLUS, "+", line, column))
+			_advance()
+			continue
+		if current_char == "-":
+			tokens.append(Token.new(TokenType.MINUS, "-", line, column))
+			_advance()
+			continue
+		if current_char == "*":
+			tokens.append(Token.new(TokenType.MULTIPLY, "*", line, column))
+			_advance()
+			continue
+		if current_char == "/":
+			tokens.append(Token.new(TokenType.DIVIDE, "/", line, column))
+			_advance()
 			continue
 
 		# C-Style Operators  

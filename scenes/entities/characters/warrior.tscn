@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://bjgqcm5afyhlh"]
 
-[ext_resource type="Script" uid="uid://bub5bmteqivh5" path="res://scripts/entities/characters/warrior.gd" id="1_1x042"]
+[ext_resource type="Script" uid="uid://bub5bmteqivh5" path="res://scripts/entities/warrior.gd" id="1_1x042"]
 [ext_resource type="Texture2D" uid="uid://dyud0714haoks" path="res://assets/Tiny Swords (Update 010)/Factions/Knights/Troops/Warrior/Yellow/Warrior_Yellow.png" id="1_p3k1l"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_tvs8d"]
@@ -412,7 +412,10 @@ corner_radius_bottom_left = 3
 [sub_resource type="CircleShape2D" id="CircleShape2D_iiqdc"]
 radius = 22.3607
 
-[node name="warrior" type="CharacterBody2D" unique_id=866586260 groups=["obstacles", "warrior"]]
+[node name="warrior" type="CharacterBody2D" unique_id=866586260 groups=["obstacles", "warrior"]
+collision_layer = 1
+collision_mask = 54
+]
 script = ExtResource("1_1x042")
 
 [node name="anim" type="AnimatedSprite2D" parent="." unique_id=1819742720]

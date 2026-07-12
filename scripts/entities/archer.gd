@@ -27,7 +27,8 @@ var gold: int = 0
 var backpack: Array = []
 
 @export var speed: float = 200.0
-var state: int = 0 # state =0(idle)=1(run)=2(attack)...
+enum State { IDLE, MOVING, ACTION, DAMAGED, DEAD }
+var state: State = State.IDLE
 var dir: int = 1
 var life: int = 20
 
@@ -200,18 +201,18 @@ func _physics_process(delta: float) -> void:
 			velocity = Vector2.ZERO
 			is_moving = false
 			is_invulnerable = false
-			if state == 1:
-				state = 0
+			if state == State.MOVING:
+				state = State.IDLE
 				finished_action.emit()
 				get_tree().create_timer(0.05).timeout.connect(func():
-					if state == 0 and not is_moving and anim.animation != "idle":
+					if state == State.IDLE and not is_moving and anim.animation != "idle":
 						anim.play("idle")
 				)
 		else:
 			velocity = position.direction_to(target_position) * speed
-			move_and_slide()
+			position = position.move_toward(target_position, step)
 			
-	elif state == 0 and anim.animation != "idle" and not is_moving:
+	elif state == State.IDLE and anim.animation != "idle" and not is_moving:
 		pass # Handled by the timer above
 
 
@@ -260,11 +261,36 @@ func _check_direction(target_type: String, v_dir: Vector2) -> bool:
 	interaction_ray.force_raycast_update()
 	if interaction_ray.is_colliding():
 		var collider = interaction_ray.get_collider()
+		if _collider_matches_tag(collider, target_type): return true
 		if target_type == "danger" and collider.is_in_group("danger"): return true
 		if target_type == "trap" and collider.is_in_group("Traps"): return true
 		if target_type == "enemy" and collider.is_in_group("enemies"): return true
 		if target_type == "obstacle":
 			if collider.is_in_group("obstacles") or not collider is Area2D: return true
+	return false
+
+func _collider_matches_tag(collider: Object, tag: String) -> bool:
+	var t = tag.to_lower()
+	if collider.is_in_group(t): return true
+	
+	if t == "stone" or t == "rock":
+		if collider.is_in_group("obstacles"):
+			if "decor_type" in collider and collider.decor_type.begins_with("Rock"):
+				return true
+		if "rock" in collider.name.to_lower() or "stone" in collider.name.to_lower():
+			return true
+			
+	if t == "building":
+		for g in ["house", "storage", "sawmill", "building"]:
+			if collider.is_in_group(g) or g in collider.name.to_lower():
+				return true
+				
+	if t == "tree":
+		if collider.is_in_group("trees") or "tree" in collider.name.to_lower():
+			return true
+			
+	if t in collider.name.to_lower(): return true
+	if collider.get_parent() and t in collider.get_parent().name.to_lower(): return true
 	return false
 
 func check_forward(target_type: String = "obstacle") -> bool: return _check_direction(target_type, get_facing_vector())
@@ -336,7 +362,7 @@ func move_down() -> void: move_direction(Vector2.DOWN)
 func move_forward() -> void: move_direction(get_facing_vector())
 
 func move_direction(direction: Vector2) -> void:
-	if is_moving or state == 2:
+	if is_moving or state == State.ACTION:
 		call_deferred("emit_signal", "finished_action")
 		return
 		
@@ -384,13 +410,14 @@ func move_direction(direction: Vector2) -> void:
 			elif movement_direction.y < 0: dir = 2
 			elif movement_direction.y > 0: dir = -2
 			
+			if get_tree(): await get_tree().create_timer(0.1).timeout
 			call_deferred("emit_signal", "finished_action")
 			return
 		
 	spawn_dust()
 	target_position = position + (movement_direction * tile_size)
 	is_moving = true
-	state = 1
+	state = State.MOVING
 	
 	if movement_direction.x > 0:
 		dir = 1
@@ -408,7 +435,7 @@ func move_direction(direction: Vector2) -> void:
 		anim.play("run")
 
 func unlock_gate(key_name: String = "") -> void:
-	if is_moving or state == 2:
+	if is_moving or state == State.ACTION:
 		call_deferred("emit_signal", "finished_action")
 		return
 	
@@ -443,10 +470,10 @@ func attack() -> void:
 	perform_attack()
 
 func perform_attack(_attack_type: int = 1) -> void:
-	if is_moving or state == 2:
+	if is_moving or state == State.ACTION:
 		call_deferred("emit_signal", "finished_action")
 		return
-	state = 2
+	state = State.ACTION
 	is_invulnerable = true
 	
 	if goblin_torch == true and attack_timer >= 0:
@@ -485,16 +512,15 @@ func perform_attack(_attack_type: int = 1) -> void:
 	# Emulate animation finish delay
 	if get_tree():
 		await get_tree().create_timer(attack_interval).timeout
-	state = 0
+	state = State.IDLE
 	is_invulnerable = false
 	finished_action.emit()
 
 func shield_block() -> void:
-	if is_moving or state == 2:
+	if is_moving or state == State.ACTION:
 		call_deferred("emit_signal", "finished_action")
 		return
-	
-	state = 2
+	state = State.ACTION
 	is_invulnerable = true
 	anim.play("idle") # Or a block animation if one exists
 	speak("SHIELD BLOCK!")
@@ -503,7 +529,7 @@ func shield_block() -> void:
 	if get_tree():
 		await get_tree().create_timer(1.0).timeout
 		
-	state = 0
+	state = State.IDLE
 	finished_action.emit()
 	is_invulnerable = false
 
@@ -516,18 +542,18 @@ func life_tnt_attacked():
 	take_damage(2)
 
 func _on_timer_timeout() -> void:
-	if state == 2:
-		state = 0
+	if state == State.ACTION:
+		state = State.IDLE
 
 func _on_dammage_box_body_entered(body: Node2D) -> void:
 	if body.name.begins_with("goblin_torch"):
-		if state == 2:
+		if state == State.ACTION:
 			player_in_range = true
 			goblin_torch = true
 			if game_manager and game_manager.has_method("goblin_torch_death"):
 				game_manager.goblin_torch_death()
 	if body.name.begins_with("goblin_tnt"):
-		if state == 2:
+		if state == State.ACTION:
 			player_in_range = true
 			goblin_tnt = true
 			if game_manager and game_manager.has_method("goblin_tnt_death"):
@@ -555,11 +581,20 @@ func take_damage(amount: int) -> void:
 	if amount > 0:
 		if AudioManager: AudioManager.play_hit()
 		life -= amount
-		life_changed.emit(life, Global.max_health if Global else 20)
+		var ft = preload("res://scenes/ui/floating_text.tscn").instantiate()
+		ft.text = str(amount)
+		ft.color = Color(1, 0.2, 0.2)
+		ft.global_position = global_position
+		get_tree().current_scene.call_deferred("add_child", ft)
+		
+		var old_state = state
+		state = State.DAMAGED
 		modulate = Color(1, 0, 0)
 		hit_stop(0.1, 0.05)
 		await get_tree().create_timer(0.2).timeout
 		modulate = Color(1, 1, 1)
+		if state == State.DAMAGED:
+			state = State.IDLE
 		
 	if life <= 0:
 		Engine.time_scale = 1.0 # Ensure time scale is reset
@@ -606,10 +641,10 @@ func spawn_dust():
 	if is_instance_valid(dust): dust.queue_free()
 
 func ranged_attack() -> void:
-	if is_moving or state == 2:
+	if is_moving or state == State.ACTION:
 		call_deferred("emit_signal", "finished_action")
 		return
-	state = 2
+	state = State.ACTION
 	is_invulnerable = true
 	
 	anim.play("shoot")
@@ -636,7 +671,7 @@ func ranged_attack() -> void:
 		
 	if get_tree():
 		await get_tree().create_timer(attack_interval).timeout
-	state = 0
+	state = State.IDLE
 	is_invulnerable = false
 	finished_action.emit()
 
@@ -662,8 +697,16 @@ func execute_instruction(command: String, args: Array) -> void:
 		
 	if has_method(command):
 		var method_args = args if args.size() > 0 else []
+		var is_finished = [false]
+		var failsafe = get_tree().create_timer(3.0)
+		failsafe.timeout.connect(func():
+			if not is_finished[0]:
+				is_finished[0] = true
+				call_deferred("emit_signal", "finished_action")
+		)
 		callv(command, method_args)
 		await self.finished_action
+		is_finished[0] = true
 	else:
 		match command:
 			"guard":

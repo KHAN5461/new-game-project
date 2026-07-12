@@ -64,6 +64,8 @@ animations = [{
 radius = 38.4708
 
 [node name="wood" type="Area2D"]
+collision_layer = 8
+collision_mask = 1
 texture_filter = 1
 scale = Vector2(0.6, 0.6)
 script = ExtResource("1_uw12f")

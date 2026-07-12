@@ -43,6 +43,11 @@ func run_swarm(scripts: Dictionary, step_mode: bool = false) -> bool:
 		class_asts[group_name] = ast
 		
 		if ast != null:
+			if ast.get("type") == "Error":
+				_on_execution_error(group_name, ast.get("line", 1), ast.get("message", "Unknown syntax error"))
+				stop_swarm()
+				return false
+				
 			var units = get_tree().get_nodes_in_group(group_name)
 			for unit in units:
 				assign_interpreter(unit, group_name, step_mode)
@@ -58,7 +63,7 @@ func assign_interpreter(unit: Node2D, group_name: String, step_mode: bool = fals
 	add_child(interp)
 	
 	if interp.has_signal("runtime_error"):
-		interp.runtime_error.connect(func(msg, line): _on_execution_error(line, msg))
+		interp.runtime_error.connect(func(msg, line): _on_execution_error(group_name, line, msg))
 	if interp.has_signal("execution_cycle_completed"):
 		interp.execution_cycle_completed.connect(func(node): 
 			if node.has("line"):
@@ -95,8 +100,11 @@ func get_interpreters_for_group(group_name: String) -> Array:
 func _on_execution_finished() -> void:
 	pass
 
-func _on_execution_error(line_number: int, message: String) -> void:
+signal swarm_error(group_name: String, line_number: int, message: String)
+
+func _on_execution_error(group_name: String, line_number: int, message: String) -> void:
 	print("Swarm Error on line ", line_number, ": ", message)
+	emit_signal("swarm_error", group_name, line_number, message)
 
 func _on_interpreter_finished() -> void:
 	completed_interpreters += 1

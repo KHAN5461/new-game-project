@@ -23,6 +23,8 @@ script = ExtResource("1_rpcxf")
 rotation = -1.1071488
 
 [node name="Area2D" type="Area2D" parent="PathFollow2D" unique_id=348554057]
+collision_layer = 32
+collision_mask = 3
 
 [node name="Sprite2D" type="Sprite2D" parent="PathFollow2D/Area2D" unique_id=910696284]
 texture = ExtResource("2_kfpjg")

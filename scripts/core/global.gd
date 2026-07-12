@@ -5,11 +5,13 @@ var max_health: int = 20
 var attack_damage: int = 1
 var unlocked_items: Array = []
 var unlocked_spells: Array = []
-var max_unlocked_level: int = 30
+var max_unlocked_level: int = 1
 var selected_level: int = 1
+var level_stars: Dictionary = {}
 
 var endless_mode: bool = false
 var endless_depth: int = 1
+var is_debugging_paused: bool = false
 
 var autocomplete_enabled: bool = true
 var fast_execution: bool = false
@@ -19,9 +21,23 @@ var last_code: String = ""
 var level_codes: Dictionary = {}
 var script_inventory: Dictionary = {}
 
+var language_mode: int = 0 # 0 for Python, 1 for C++
+
 var gold: int = 500
 var wood: int = 500
 var meat: int = 500
+
+var spent_stars: int = 0
+var unlocked_keywords: Array = ["move_forward", "turn_left", "turn_right", "attack", "chop", "wait"] # Start with core commands only
+var keyword_costs: Dictionary = {
+	"while": {"gold": 50, "wood": 20},
+	"if": {"gold": 100, "wood": 50},
+	"else": {"gold": 100, "wood": 50},
+	"var": {"gold": 200, "wood": 100},
+	"build": {"gold": 150, "wood": 150},
+	"check_forward": {"gold": 75, "wood": 0},
+	"is_enemy_near": {"gold": 100, "wood": 0}
+}
 var max_gold: int = 1000
 var max_wood: int = 1000
 var max_meat: int = 1000
@@ -35,6 +51,7 @@ var wave_interval: float = 60.0
 var wave_active: bool = false
 var Goblin_house: int = 0
 var pawn_tool: String = ""
+var swarm_messages: Dictionary = {}
 
 
 var levels: Array = [
@@ -62,7 +79,9 @@ var levels: Array = [
 	{
 		"name": "Level 4",
 		"icon": "res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/House2.png",
-		"pos": Vector2(700, 300)
+		"pos": Vector2(700, 300),
+		"par_loc": 6,
+		"par_cycles": 25
 	},
 	{
 		"name": "Level 5",
@@ -211,7 +230,14 @@ func save_game() -> void:
 		"fullscreen": fullscreen,
 		"ide_on_left": ide_on_left,
 		"last_code": last_code,
-		"level_codes": level_codes
+		"level_codes": level_codes,
+		"gold": gold,
+		"wood": wood,
+		"meat": meat,
+		"unlocked_keywords": unlocked_keywords,
+		"script_inventory": script_inventory,
+		"level_stars": level_stars,
+		"spent_stars": spent_stars
 	}
 	var file = FileAccess.open("user://save_data.json", FileAccess.WRITE)
 	if file:
@@ -236,6 +262,13 @@ func load_game() -> void:
 				if data.has("ide_on_left"): ide_on_left = data["ide_on_left"]
 				if data.has("last_code"): last_code = data["last_code"]
 				if data.has("level_codes"): level_codes = data["level_codes"]
+				if data.has("gold"): gold = data["gold"]
+				if data.has("wood"): wood = data["wood"]
+				if data.has("meat"): meat = data["meat"]
+				if data.has("unlocked_keywords"): unlocked_keywords = data["unlocked_keywords"]
+				if data.has("script_inventory"): script_inventory = data["script_inventory"]
+				if data.has("level_stars"): level_stars = data["level_stars"]
+				if data.has("spent_stars"): spent_stars = data["spent_stars"]
 
 func get_level_code(lvl: int) -> String:
 	if level_codes.has(str(lvl)):
@@ -259,3 +292,17 @@ func consume_meat(amount: int) -> bool:
 	if meat < amount: return false
 	meat -= amount
 	return true
+
+func get_total_stars() -> int:
+	var total = 0
+	for key in level_stars.keys():
+		total += int(level_stars[key])
+	return total
+
+func get_available_stars() -> int:
+	return get_total_stars() - spent_stars
+
+func reset_tech_tree() -> void:
+	spent_stars = 0
+	unlocked_keywords = ["move_forward", "turn_left", "turn_right", "attack", "chop", "wait"]
+	save_game()

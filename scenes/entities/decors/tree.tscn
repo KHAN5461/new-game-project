@@ -1,7 +1,7 @@
-[gd_scene load_steps=13 format=3 uid="uid://vci6dpflhpyb"]
+[gd_scene format=3 uid="uid://vci6dpflhpyb"]
 
 [ext_resource type="Texture2D" uid="uid://ev1bgngqfh6n" path="res://assets/Tiny Swords (Update 010)/Resources/Trees/Tree.png" id="1_dgw3b"]
-[ext_resource type="Script" path="res://scripts/entities/decors/tree.gd" id="1_tt6vs"]
+[ext_resource type="Script" uid="uid://dy0x4p7nvk3ra" path="res://scripts/entities/decors/tree.gd" id="1_tt6vs"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_ieafg"]
 atlas = ExtResource("1_dgw3b")
@@ -46,15 +46,15 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mc8xp")
 }],
-"loop": true,
+"loop": 1,
 "name": &"attacked",
-"speed": 5.0
+"speed": 10.0
 }, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_f6346")
 }],
-"loop": true,
+"loop": 1,
 "name": &"chopped",
 "speed": 5.0
 }, {
@@ -65,9 +65,9 @@ animations = [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_c3mvj")
 }],
-"loop": true,
+"loop": 1,
 "name": &"idle",
-"speed": 4.0
+"speed": 10.0
 }]
 
 [sub_resource type="CapsuleShape2D" id="CapsuleShape2D_hejy2"]
@@ -78,30 +78,28 @@ height = 68.0
 radius = 30.0
 height = 60.0
 
-[node name="tree" type="StaticBody2D" groups=["obstacles"]]
+[node name="tree" type="StaticBody2D" unique_id=1233451502 groups=["obstacles"]]
 texture_filter = 1
-collision_layer = 31
-collision_mask = 31
 script = ExtResource("1_tt6vs")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2073847412]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_1wnai")
 animation = &"idle"
 autoplay = "idle"
 metadata/_edit_lock_ = true
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=804950817]
 visible = false
 position = Vector2(1, 50)
 shape = SubResource("CapsuleShape2D_hejy2")
 debug_color = Color(0.552941, 0.278431, 0.0196078, 0.419608)
 metadata/_edit_lock_ = true
 
-[node name="tree" type="Area2D" parent="."]
+[node name="tree" type="Area2D" parent="." unique_id=1278393141]
 collision_layer = 31
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="tree"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="tree" unique_id=263275939]
 visible = false
 position = Vector2(1, 39)
 shape = SubResource("CapsuleShape2D_21c4p")

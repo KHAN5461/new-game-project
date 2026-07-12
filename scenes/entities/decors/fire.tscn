@@ -72,6 +72,8 @@ frame_progress = 0.943491
 script = ExtResource("2_l4m2t")
 
 [node name="fire" type="Area2D" parent="."]
+collision_layer = 32
+collision_mask = 3
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="fire"]
 visible = false

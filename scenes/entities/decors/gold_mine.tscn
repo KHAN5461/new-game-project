@@ -1,0 +1,20 @@
+[gd_scene format=3 uid="uid://cxmine837xy0"]
+
+[ext_resource type="Script" path="res://scripts/entities/decors/gold_mine.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dmxmine827abc" path="res://assets/Tiny Swords (Update 010)/Resources/Gold Mine/GoldMine_Active.png" id="2_texture"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_mine"]
+size = Vector2(100, 60)
+
+[node type="GoldMine" type="StaticBody2D" groups=["mine", "gold"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+
+[node type="Sprite2D" type="Sprite2D" parent="."]
+position = Vector2(0, -32)
+texture = ExtResource("2_texture")
+
+[node type="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(0, -10)
+shape = SubResource("RectangleShape2D_mine")

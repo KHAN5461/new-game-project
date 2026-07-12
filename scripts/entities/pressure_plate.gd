@@ -16,14 +16,14 @@ func _ready() -> void:
 	update_visuals()
 
 func _on_body_entered(body: Node2D) -> void:
-	if body.is_in_group("warrior") or body.is_in_group("enemies") or body.is_in_group("pushable"):
+	if body.is_in_group("warrior") or body.is_in_group("enemies") or body.is_in_group("pushable") or body.is_in_group("pawn") or body.is_in_group("builder"):
 		bodies_on_plate += 1
 		if bodies_on_plate > 0 and not is_pressed:
 			is_pressed = true
 			_trigger_state()
 
 func _on_body_exited(body: Node2D) -> void:
-	if body.is_in_group("warrior") or body.is_in_group("enemies") or body.is_in_group("pushable"):
+	if body.is_in_group("warrior") or body.is_in_group("enemies") or body.is_in_group("pushable") or body.is_in_group("pawn") or body.is_in_group("builder"):
 		bodies_on_plate -= 1
 		if bodies_on_plate <= 0 and is_pressed:
 			bodies_on_plate = 0

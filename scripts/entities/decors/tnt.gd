@@ -21,20 +21,21 @@ func rotate_towards(target_position: Vector2) -> void:
 	#Calculate the direction to the target
 	var direction: Vector2 = (target_position - global_position).normalized()
 
+var time_alive: float = 0.0
 func _physics_process(delta: float) -> void:
+	time_alive += delta
 	position += direction * speed * delta
 	
-		# Get the angle to the target
+	# Get the angle to the target
 	var target_angle: float = direction.angle()
 	# Snap to the nearest cardinal direction
 	var closest_angle:float=snap_to_nearest_angle(target_angle)
 	# Set the rotation of the arrow
 	rotation = closest_angle
 	
-	
 	# stop the dynamite
-	var timer = get_tree().create_timer(0.5)
-	timer.timeout.connect(self.stop)
+	if time_alive > 0.5:
+		stop()
 
 # stop the tnt after a define time
 func stop():

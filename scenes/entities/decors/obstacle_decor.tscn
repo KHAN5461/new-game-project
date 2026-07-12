@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://cobstdecor"]
+
+[ext_resource type="Script" uid="uid://d0mbpyfw3oxql" path="res://scripts/entities/decors/obstacle_decor.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://btfsapntx1auk" path="res://assets/Tiny Swords (Free Pack)/Terrain/Decorations/Rocks/Rock2.png" id="2_jrsfp"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_obst"]
+radius = 16.27882
+
+[node name="ObstacleDecor" type="StaticBody2D" unique_id=1487522432 groups=["obstacles"]]
+collision_layer = 4
+collision_mask = 0
+script = ExtResource("1_script")
+decor_type = "Rock2"
+
+[node name="Sprite2D" type="Sprite2D" parent="." unique_id=916205802]
+texture_filter = 1
+texture = ExtResource("2_jrsfp")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=867500201]
+position = Vector2(0, 10)
+shape = SubResource("CircleShape2D_obst")

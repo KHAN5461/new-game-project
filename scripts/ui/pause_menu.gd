@@ -33,4 +33,5 @@ func _on_restart() -> void:
 
 func _on_quit() -> void:
 	get_tree().paused = false
+	hide()
 	get_tree().change_scene_to_file("res://scenes/ui/main_menu.tscn")

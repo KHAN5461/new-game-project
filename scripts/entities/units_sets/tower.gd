@@ -1,7 +1,7 @@
 extends PanelContainer
 
 @onready var tower_icon: TextureRect = $"Panel/banner/tower icon"
-@onready var game_manager: Node2D = $"../.."
+@onready var game_manager: Node = $"../.."
 
 
 

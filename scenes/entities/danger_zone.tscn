@@ -5,10 +5,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_dz"]
 size = Vector2(192, 192)
 
-[node name="DangerZone" type="Area2D" groups=["danger"]]
+[node name="DangerZone" type="Area2D" groups=["danger"]
+collision_layer = 32
+collision_mask = 3
+]
 y_sort_enabled = true
-collision_layer = 16
-collision_mask = 6
 script = ExtResource("1_script")
 
 [node name="ColorRect" type="ColorRect" parent="."]

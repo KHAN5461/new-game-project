@@ -25,7 +25,8 @@ var ray: RayCast2D
 var current_direction: Vector2 = Vector2.RIGHT
 var is_moving: bool = false
 var target_position: Vector2
-var state: int = 0 # 0=idle, 1=moving, 2=attacking
+enum State { IDLE, MOVING, ACTION, DAMAGED, DEAD }
+var state: State = State.IDLE
 
 var starting_position: Vector2
 var starting_rotation_degrees: float
@@ -87,7 +88,7 @@ func _can_move_in_direction(dir: Vector2) -> bool:
 	return true
 
 func _on_ai_tick() -> void:
-	if is_moving or state == 2: return
+	if is_moving or state == State.ACTION: return
 	
 	var warrior = get_tree().get_first_node_in_group("warrior")
 	if warrior:
@@ -112,7 +113,7 @@ func _on_ai_tick() -> void:
 	else:
 		_pick_next_direction()
 		anim_row = 0
-		state = 0
+		state = State.IDLE
 
 func _chase_warrior(warrior: Node2D) -> void:
 	var dx = warrior.position.x - position.x
@@ -136,12 +137,12 @@ func _chase_warrior(warrior: Node2D) -> void:
 		_start_move()
 	else:
 		anim_row = 0
-		state = 0
+		state = State.IDLE
 
 func _start_move() -> void:
 	target_position = position + (current_direction * tile_size)
 	is_moving = true
-	state = 1
+	state = State.MOVING
 	anim_row = 1
 	if current_direction.x != 0:
 		sprite.flip_h = current_direction.x < 0
@@ -155,7 +156,7 @@ func _start_move() -> void:
 		tween.tween_property(sprite, "scale", Vector2(1.0, 1.0), 0.08)
 
 func _attack_warrior(warrior: Node2D) -> void:
-	state = 2
+	state = State.ACTION
 	anim_row = 2
 	current_frame = 0
 	if warrior.position.x < position.x: sprite.flip_h = true
@@ -166,7 +167,7 @@ func _attack_warrior(warrior: Node2D) -> void:
 		
 	if get_tree():
 		await get_tree().create_timer(0.6).timeout
-	state = 0
+	state = State.IDLE
 	anim_row = 0
 
 func _physics_process(delta: float) -> void:
@@ -178,11 +179,11 @@ func _physics_process(delta: float) -> void:
 			position = target_position
 			velocity = Vector2.ZERO
 			is_moving = false
-			state = 0
+			state = State.IDLE
 			anim_row = 0
 		else:
 			velocity = position.direction_to(target_position) * speed
-			move_and_slide()
+			position = position.move_toward(target_position, step)
 			
 	if sprite:
 		anim_timer += delta
@@ -200,8 +201,21 @@ func take_damage(amount: int = 1) -> void:
 	ft.color = Color(1, 1, 1)
 	ft.global_position = global_position
 	get_tree().current_scene.call_deferred("add_child", ft)
+	
+	var old_state = state
+	state = State.DAMAGED
+	modulate = Color(1, 0, 0)
+	
+	await get_tree().create_timer(0.2).timeout
+	modulate = Color(1, 1, 1)
+	if state == State.DAMAGED:
+		state = State.IDLE
 
 	if life <= 0:
+		if not is_dead:
+			is_dead = true
+			if SignalBus.has_signal("enemy_killed"):
+				SignalBus.enemy_killed.emit()
 		var explosion = preload("res://scenes/entities/explosion.tscn").instantiate()
 		explosion.global_position = global_position
 		get_tree().current_scene.call_deferred("add_child", explosion)
@@ -240,7 +254,7 @@ func rollback_to_start() -> void:
 	global_position = starting_position
 	rotation_degrees = starting_rotation_degrees
 	current_hp = initial_hp
-	state = 0
+	state = State.IDLE
 	is_moving = false
 	target_position = position
 	show()

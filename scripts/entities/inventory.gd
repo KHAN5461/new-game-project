@@ -4,7 +4,8 @@ enum ItemTypes {
 	POTION,
 	KEY,
 	APPLE,
-	TNT
+	TNT,
+	PLANK
 }
 
 var items: Dictionary = {}

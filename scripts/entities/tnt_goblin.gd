@@ -187,6 +187,8 @@ func take_damage(amount: int = 1) -> void:
 	get_tree().current_scene.call_deferred("add_child", ft)
 
 	if life <= 0:
+		if SignalBus.has_signal("enemy_killed"):
+			SignalBus.enemy_killed.emit()
 		var explosion = preload("res://scenes/entities/explosion.tscn").instantiate()
 		explosion.global_position = global_position
 		get_tree().current_scene.call_deferred("add_child", explosion)

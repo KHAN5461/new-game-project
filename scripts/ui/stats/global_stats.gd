@@ -22,13 +22,25 @@ func sub_pawn():
 	pawn_no-=1
 func add_wood():
 	wood_no+=5
+	if Global: Global.wood += 5
 func sub_wood():
 	wood_no-=1
+	if Global: Global.wood -= 1
 func add_cash():
 	cash_no+=1
+	if Global: Global.gold += 1
 func sub_cash():
 	cash_no-=1
+	if Global: Global.gold -= 1
 func add_meat():
 	meat_no+=1
+	if Global: Global.meat += 1
 func sub_meat():
 	meat_no-=1
+	if Global: Global.meat -= 1
+func add_gold(amount: int = 1):
+	cash_no+=amount
+	if Global: Global.gold += amount
+func sub_gold(amount: int = 1):
+	cash_no-=amount
+	if Global: Global.gold -= amount

@@ -38,6 +38,12 @@ var end_title: Label
 var end_gold: Label
 var end_loc: Label
 var end_cycles: Label
+
+signal placement_selected(pos: Vector2)
+var is_placing: bool = false
+var placing_type: String = ""
+var ghost_sprite: Sprite2D = null
+
 var end_rating: Label
 var skip_tally: bool = false
 
@@ -71,6 +77,38 @@ func _on_goal_reached() -> void:
 	if swarm:
 		swarm.stop_swarm()
 		
+	var total_loc = 0
+	var total_cycles = 0
+	var par_loc = 10
+	var par_cycles = 50
+	var stars = 1
+		
+	if Global and LevelManager:
+		if LevelManager.current_level_index >= Global.max_unlocked_level:
+			Global.max_unlocked_level = LevelManager.current_level_index + 1
+			
+		# Calculate stats
+		for script in Global.script_inventory.values():
+			if typeof(script) == TYPE_STRING:
+				total_loc += script.split("\n").size()
+		
+		if swarm:
+			for interp in swarm.active_interpreters:
+				total_cycles += interp.current_cycles
+				
+		var lvl_data = Global.levels[LevelManager.current_level_index - 1]
+		if lvl_data.has("par_loc"): par_loc = lvl_data["par_loc"]
+		if lvl_data.has("par_cycles"): par_cycles = lvl_data["par_cycles"]
+		
+		if total_loc <= par_loc: stars += 1
+		if total_cycles <= par_cycles: stars += 1
+
+		var level_str = str(LevelManager.current_level_index)
+		if not Global.level_stars.has(level_str) or Global.level_stars[level_str] < stars:
+			Global.level_stars[level_str] = stars
+			
+		Global.save_game()
+		
 	var warrior = get_tree().get_first_node_in_group("warrior")
 	if warrior:
 		if warrior.get("anim"):
@@ -80,7 +118,60 @@ func _on_goal_reached() -> void:
 		if warrior.get("inventory") and warrior.inventory.has_method("save"):
 			warrior.inventory.save()
 	await get_tree().create_timer(2.0, true, false, true).timeout
-	_on_next_pressed()
+	var level_complete_ui = load("res://scenes/ui/level_complete.tscn").instantiate()
+	level_complete_ui.setup(total_loc, par_loc, total_cycles, par_cycles, stars)
+	add_child(level_complete_ui)
+
+func request_placement(structure_type: String) -> Vector2:
+	if is_placing: return Vector2.ZERO
+	is_placing = true
+	placing_type = structure_type
+	
+	ghost_sprite = Sprite2D.new()
+	var tex_path = "res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/House1.png"
+	if structure_type == "wall":
+		tex_path = "res://assets/Tiny Swords (Free Pack)/Decors/17.png"
+	elif structure_type == "tower":
+		tex_path = "res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/Tower.png"
+	elif structure_type == "sawmill":
+		tex_path = "res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/House2.png"
+	elif structure_type == "storage":
+		tex_path = "res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/House3.png"
+	elif structure_type == "barracks":
+		tex_path = "res://assets/Tiny Swords (Free Pack)/Buildings/Blue Buildings/Barracks.png"
+		
+	if ResourceLoader.exists(tex_path):
+		ghost_sprite.texture = load(tex_path)
+	ghost_sprite.modulate = Color(1.0, 1.0, 1.0, 0.5)
+	add_child(ghost_sprite)
+	
+	var pos = await self.placement_selected
+	
+	if is_instance_valid(ghost_sprite):
+		ghost_sprite.queue_free()
+	is_placing = false
+	return pos
+
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if is_placing:
+		if event is InputEventMouseButton and event.pressed:
+			if event.button_index == MOUSE_BUTTON_LEFT:
+				var mouse_pos = get_viewport().get_mouse_position()
+				var camera = get_viewport().get_camera_2d()
+				var world_mouse = mouse_pos
+				if camera:
+					world_mouse = camera.get_screen_center_position() + (mouse_pos - get_viewport().size / 2.0)
+				var snapped_pos = (world_mouse / 64).round() * 64
+				placement_selected.emit(snapped_pos)
+				get_viewport().set_input_as_handled()
+			elif event.button_index == MOUSE_BUTTON_RIGHT:
+				placement_selected.emit(Vector2.ZERO)
+				get_viewport().set_input_as_handled()
+		elif event is InputEventKey and event.pressed and event.keycode == KEY_ESCAPE:
+			placement_selected.emit(Vector2.ZERO)
+			get_viewport().set_input_as_handled()
 
 func _on_restart_pressed() -> void:
 	Engine.time_scale = 1.0
@@ -175,10 +266,31 @@ func _on_level_started(index: int) -> void:
 	tween.tween_interval(4.0) # Wait 4 seconds
 	tween.tween_property(objective_panel, "position:y", -400.0, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
 
+func update_objective_ui(text: String) -> void:
+	if objective_label:
+		objective_label.text = text
+	if objective_panel:
+		objective_panel.position.y = -400
+		var tween = create_tween()
+		tween.tween_property(objective_panel, "position:y", 60.0, 0.8).set_trans(Tween.TRANS_BOUNCE).set_ease(Tween.EASE_OUT)
+		tween.tween_interval(4.0)
+		tween.tween_property(objective_panel, "position:y", -400.0, 0.5).set_trans(Tween.TRANS_BACK).set_ease(Tween.EASE_IN)
+
+
 func _process(_delta: float) -> void:
+	if is_placing and is_instance_valid(ghost_sprite):
+		var mouse_pos = get_viewport().get_mouse_position()
+		var camera = get_viewport().get_camera_2d()
+		var world_mouse = mouse_pos
+		if camera:
+			world_mouse = camera.get_screen_center_position() + (mouse_pos - get_viewport().size / 2.0)
+		var snapped_pos = (world_mouse / 64).round() * 64
+		ghost_sprite.global_position = snapped_pos
+
 	if get_tree().current_scene and (get_tree().current_scene.name in ["MainMenu", "EndScreen", "Overworld", "OverworldMap", "Shop", "LevelSelect"]):
 		if hud_root: hud_root.hide()
 		if objective_panel: objective_panel.hide()
+		if pause_menu: pause_menu.hide()
 		return
 	else:
 		if hud_root: hud_root.show()
@@ -242,6 +354,14 @@ func compile_and_run(code: String, target_unit: Node):
 	
 	_snapshot_entire_active_level()
 	
+	var raw_lines = code.split("\n")
+	var loc_count = 0
+	for l in raw_lines:
+		var txt = l.strip_edges()
+		if txt != "" and not txt.begins_with("#") and not txt.begins_with("//"):
+			loc_count += 1
+	lines_of_code = loc_count
+	
 	var active_lang = GlobalSettings.active_language if GlobalSettings else 0
 	var lexer = CustomLexer.new()
 	var parser = CustomParser.new()
@@ -275,7 +395,8 @@ func _on_cycle_processed(_node_info: Dictionary):
 		transition_to(GameState.OVERHEATED)
 
 func _on_runtime_error(msg: String, line: int):
-	emit_signal("compilation_failed", msg, line)
+	var detailed_msg = "[Runtime Error] Line " + str(line) + ": " + msg
+	emit_signal("compilation_failed", detailed_msg, line)
 	transition_to(GameState.CODING)
 
 func _set_ide_visibility(is_visible: bool):
@@ -290,6 +411,8 @@ func _display_defeat_modal(message: String):
 func _display_victory_modal():
 	if SignalBus and SignalBus.has_signal("level_ended"):
 		SignalBus.emit_signal("level_ended", true, "Level Complete!")
+	if SignalBus and SignalBus.has_signal("show_metrics"):
+		SignalBus.emit_signal("show_metrics", lines_of_code, execution_cycles)
 
 func _snapshot_entire_active_level() -> void:
 	level_origin_state.clear()

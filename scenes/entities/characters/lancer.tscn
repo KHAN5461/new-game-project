@@ -1,6 +1,6 @@
 [gd_scene format=3 uid="uid://cw4st48m3uybv"]
 
-[ext_resource type="Script" uid="uid://c54d7tfg8gf23" path="res://scripts/entities/characters/warrior.gd" id="1_blla8"]
+[ext_resource type="Script" uid="uid://c54d7tfg8gf23" path="res://scripts/entities/warrior.gd" id="1_blla8"]
 [ext_resource type="Texture2D" uid="uid://j04qqpnr2pwm" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Lancer/Lancer_Down_Attack.png" id="2_v1vbi"]
 [ext_resource type="Texture2D" uid="uid://cej7nqkd2vukt" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Lancer/Lancer_Down_Defence.png" id="3_gyrkl"]
 [ext_resource type="Texture2D" uid="uid://f54qkatt4l3j" path="res://assets/Tiny Swords (Free Pack)/Units/Blue Units/Lancer/Lancer_DownRight_Attack.png" id="4_nxeof"]
@@ -548,7 +548,10 @@ corner_radius_bottom_left = 3
 [sub_resource type="CircleShape2D" id="CircleShape2D_iiqdc"]
 radius = 22.3607
 
-[node name="warrior" type="CharacterBody2D" unique_id=866586260 groups=["obstacles", "warrior"]]
+[node name="warrior" type="CharacterBody2D" unique_id=866586260 groups=["obstacles", "warrior"]
+collision_layer = 1
+collision_mask = 54
+]
 script = ExtResource("1_blla8")
 
 [node name="anim" type="AnimatedSprite2D" parent="." unique_id=1819742720]

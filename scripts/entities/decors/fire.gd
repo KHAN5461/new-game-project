@@ -11,20 +11,20 @@ func _ready() -> void:
 	destroy()
 
 
+var time_alive: float = 0.0
+
 func _physics_process(delta: float) -> void:
+	time_alive += delta
+	position += direction * speed * delta
 	
-		position += direction * speed * delta
-	
-		# Get the angle to the target
-		var target_angle: float = direction.angle()
+	# Get the angle to the target
+	var target_angle: float = direction.angle()
 	# Snap to the nearest cardinal direction
-		var closest_angle:float=snap_to_nearest_angle(target_angle)
-	
+	var closest_angle:float=snap_to_nearest_angle(target_angle)
 	
 	# stop the dynamite
-		var times = get_tree().create_timer(0.05)
-		await times.timeout
-		speed=0
+	if time_alive > 0.05:
+		speed = 0
 
 
 

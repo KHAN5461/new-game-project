@@ -6,10 +6,11 @@
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_trap"]
 size = Vector2(40, 40)
 
-[node name="FireTrap" type="Area2D" groups=["Traps"]]
+[node name="FireTrap" type="Area2D" groups=["Traps"]
+collision_layer = 32
+collision_mask = 3
+]
 y_sort_enabled = true
-collision_layer = 16
-collision_mask = 6
 script = ExtResource("1_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]

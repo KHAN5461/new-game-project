@@ -1,6 +1,6 @@
 extends PanelContainer
 
-@onready var game_manager: Node2D = $"../.."
+@onready var game_manager: Node = $"../.."
 
 
 var is_dragging = false
